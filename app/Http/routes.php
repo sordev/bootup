@@ -11,16 +11,8 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', 'HomeController@index');
+//Route::get('page/{alias?}', 'ContentController@show');
 
 
-Route::resource('role', 'RoleController');
-Route::resource('user', 'UserController');
-Route::resource('permission', 'PermissionController');
-Route::resource('permission_role', 'Permission_roleController');
-Route::resource('role_user', 'Role_userController');
-Route::resource('login_attempts', 'login_attemptsController');
-Route::resource('usersocial', 'UserSocialController');
+//Route::resource('role', 'RoleController');

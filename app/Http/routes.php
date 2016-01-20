@@ -1,18 +1,19 @@
-<?php 
-
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the Closure to execute when that URI is requested.
-|
-*/
-
-Route::get('/', 'HomeController@index');
-//Route::get('page/{alias?}', 'ContentController@show');
+<?php
+//Home Route
 
 
-//Route::resource('role', 'RoleController');
+//Starting 5.2 web middleware has to be included
+Route::group(['middleware' => ['web']], function () {
+	Route::get('/', 'HomeController@index');
+	
+	//User Route
+	Route::match(['get', 'post'], '/user/login/{provider?}', 'UserController@login');
+	Route::get('user/register', 'UserController@create');
+	Route::post('user/store', 'UserController@store');
+	Route::get('user/edit/profile/password', 'UserController@editPassword');
+	Route::post('user/update/profile/password', 'UserController@updatePassword');
+	//Forgot Password
+	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
+	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
+	
+});

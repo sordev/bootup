@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="{{{$id}}}ModalLabel">{{{$title}}}</h4>
       </div>
       <div class="modal-body">
-        @include($body)
+        @include($modalbody)
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Хаах</button>

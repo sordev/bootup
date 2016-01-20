@@ -47,12 +47,12 @@ abstract class Controller extends BaseController
 				['title'=>'Бидний тухай','url'=>url('about/us')],
 			],
 			'user'=>[
-				['title'=>'Нэвтрэх','url'=>url('user/login'),'attributes'=>[
+				['title'=>'Нэвтрэх','url'=>'#','attributes'=>[
 						'data-toggle'=>'modal',
 						'data-target'=>'#loginModal',
 					],
 				],
-				['title'=>'Бүртгүүлэх','url'=>url('user/register'),'attributes'=>[
+				['title'=>'Бүртгүүлэх','url'=>'#','attributes'=>[
 						'data-toggle'=>'modal',
 						'data-target'=>'#registerModal',
 					],
@@ -62,7 +62,7 @@ abstract class Controller extends BaseController
 				['title'=>'Блог','url'=>url('blog')],
 				['title'=>'Хамтран ажиллагсад','url'=>url('about/partners')],
 				['title'=>'Дэмжигчид','url'=>url('about/supporters')],
-				['title'=>'Үйлчилгээний нөхцөл','url'=>url('terms')],
+				['title'=>'Үйлчилгээний нөхцөл','url'=>url('tos')],
 			]
 		];
 		

@@ -6,9 +6,7 @@
 			{!! Form::checkbox('remember_me',null,false,["id"=>"remember_me"]) !!} Энэ компьютер дээр сануулах
 		</label>
 	</div>
-  {!! Form::submit('Нэвтрэх',['class'=>'btn btn-default']) !!}
-  <br>эсвэл<br>
-  <button type="button" class="btn btn-default" href="{{url('user/login/facebook')}}" >Facebook -р нэвтрэх</button>
-  <button type="button" class="btn btn-default" href="{{url('user/login/twitter')}}" >Twitter -р нэвтрэх</button>
-  <button type="button" class="btn btn-default" href="{{url('user/login/google')}}" >Google -р нэвтрэх</button>
+	{!! Form::submit('Нэвтрэх',['class'=>'btn btn-default']) !!}
+	<br>эсвэл<br>
+	@include('modules.user.social')
 {!! Form::close() !!}

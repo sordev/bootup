@@ -27,6 +27,27 @@ class PasswordController extends Controller
      */
     public function __construct()
     {
+		parent::__construct();
         $this->middleware('guest');
+    }
+
+	public function getEmail()
+    {
+		$this->layout = 'auth.password';
+		$this->metas['title'] = "Нууц үгээ солих";
+		$this->view = $this->BuildLayout();
+        return $this->view;
+    }
+
+	public function getReset($token = null)
+    {
+        if (is_null($token)) {
+            throw new NotFoundHttpException;
+        }
+		$this->layout = 'auth.reset';
+		$this->metas['title'] = "Нууц үгээ солих";
+		$this->view = $this->BuildLayout()->with('token', $token);
+
+        return $this->view;
     }
 }

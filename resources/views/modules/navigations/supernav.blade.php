@@ -22,15 +22,15 @@
 		<div class="form-group">
 		  <input type="text" class="form-control" placeholder="Search">
 		</div>
-		<button type="submit" class="btn btn-default">Submit</button>
+		<button type="submit" class="btn btn-default">Хайх</button>
 	  </form>
 	  @if(isset($navigations['user']))
 	  <ul class="nav navbar-nav navbar-right">
 		@foreach($navigations['user'] as $n)
 			@include('modules.navigations.item',['item'=>$n])
 		@endforeach
-		@include('modules.modal',['title'=>'Нэвтрэх','id'=>'loginModal','body'=>'modules.user.login'])
-		@include('modules.modal',['title'=>'Бүртгүүлэх','id'=>'registerModal','body'=>'modules.user.register'])
+		@include('modules.modal',['title'=>'Нэвтрэх','id'=>'loginModal','modalbody'=>'modules.user.login'])
+		@include('modules.modal',['title'=>'Бүртгүүлэх','id'=>'registerModal','modalbody'=>'modules.user.register'])
 	  </ul>
 	  @endif
 	</div><!-- /.navbar-collapse -->

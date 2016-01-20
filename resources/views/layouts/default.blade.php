@@ -10,13 +10,11 @@
 			@include('modules.slideshow',['slideshow'=>$slideshow,'id'=>'homepage'])
 		@endif
 		
-		<div class="header">
-			<div class="ui container">
+		<div class="container">
 				@include('layouts.parts.header')
 				@yield('header')
-			</div>
 		</div>
-		<div class="ui container">
+		<div class="container">
 			@yield('content')
 		</div>
 			

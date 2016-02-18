@@ -34,5 +34,24 @@ return [
         'key'    => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+	
+	'facebook' => [
+        'client_id'=>getenv('FacebookAppId'),
+        'client_secret'=>getenv('FacebookAppSecret'),
+        //'client_version'=>'2.3',
+        'redirect'=>getenv('FacebookAppRedirect'),
+    ],
+
+    'twitter' => [
+        'client_id'=>getenv('TwitterAppKey'),
+        'client_secret'=>getenv('TwitterAppSecret'),
+        'redirect'=>getenv('TwitterAppRedirect'),
+    ],
+
+	'google' => [
+		'client_id'=>getenv('GoogleAppKey'),
+		'client_secret'=>getenv('GoogleAppSecret'),
+		'redirect'=>getenv('GoogleAppRedirect'),
+	]
 
 ];

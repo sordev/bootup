@@ -26,9 +26,12 @@ abstract class Controller extends BaseController
 		$this->layout = 'layouts.default';
 		$this->user = Auth::user();
 		$this->scripts = [
-			'header'=>['https://code.jquery.com/jquery-2.1.4.min.js'],
+			'header'=>['https://code.jquery.com/jquery-2.1.4.min.js','https://www.google.com/recaptcha/api.js?hl=mn&render=explicit&onload=callRecaptcha'],
 			'footer'=>['bootstrap.min.js','app.js']
 		];
+		
+		$recaptchakey = Setting::getSetting('recaptchakey');
+		$this->view = $this->BuildLayout()->with('recaptchakey',$recaptchakey);
 
 		$this->metas = array(
 			'description'=>Setting::getSetting('description'),
@@ -65,14 +68,24 @@ abstract class Controller extends BaseController
 				['title'=>'Үйлчилгээний нөхцөл','url'=>url('tos')],
 			]
 		];
+		if ($this->user){
+			$navigations['user'] = [
+				['title'=>'Миний бүртгэл','url'=>url('user/profile')],
+				['title'=>'Гарах','url'=>url('user/logout')],
+			];
+		}
+		
+		$recaptchakey = Setting::getSetting('recaptchakey');
 		
 		$this->view = view($this->layout)
 			->withStyles($this->styles)
 			->withScripts($this->scripts)
 			->withSettings($settings)
 			->withMetas($this->metas)
-			->withNavigations($navigations);
-			
+			->withNavigations($navigations)
+			->with('recaptchakey',$recaptchakey)
+		;
+
 		if ($this->user){
 			$this->view->withUserlevel($this->user->usr_level);
 		}

@@ -1,7 +1,4 @@
 jQuery(document).ready(function($j){
-	
-	
-	
 	function ajaxCallback(f, u, c, t) {
 		t = typeof t !== 'undefined' ? t : 'POST';
         if (f) {
@@ -17,4 +14,15 @@ jQuery(document).ready(function($j){
             });
         }
     }
+
+	
+	
 });
+function callRecaptcha(){
+	$.each($('.g-recaptcha'),function(i,v){
+		grecaptcha.render(v, {
+		  'sitekey' : recaptchakey, //Replace this with your Site key
+		  'theme' : 'light'
+		})
+	});
+}

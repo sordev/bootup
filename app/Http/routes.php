@@ -9,6 +9,7 @@ Route::group(['middleware' => ['web']], function () {
 	//User Route
 	Route::match(['get', 'post'], '/user/login/{provider?}', 'UserController@login');
 	Route::get('user/register', 'UserController@create');
+	Route::get('user/logout', 'UserController@logout');
 	Route::post('user/store', 'UserController@store');
 	Route::get('user/edit/profile/password', 'UserController@editPassword');
 	Route::post('user/update/profile/password', 'UserController@updatePassword');

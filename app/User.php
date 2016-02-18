@@ -8,7 +8,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Model {
+class User extends Model implements AuthenticatableContract{
 
 	use Authenticatable, CanResetPassword;
 	
@@ -40,8 +40,8 @@ class User extends Model {
 		return $this->password;
 	}
 
-	public function profile(){
-		return $this->hasMany('App\UserSocial','id','id');
+	public function usersocial(){
+		return $this->hasMany('App\UserSocial','id','user_id');
 	}
 
 }

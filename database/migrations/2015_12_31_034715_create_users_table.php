@@ -16,6 +16,8 @@ class CreateUsersTable extends Migration {
 			$table->string('salt', 30);
 			$table->string('register_ip', 15);
 			$table->string('forget_token', 100)->nullable();
+			$table->string('registered_with', 100)->nullable();
+			$table->rememberToken();
 			$table->string('active_token', 100)->nullable();
 			$table->tinyInteger('public');
 			$table->tinyInteger('status');

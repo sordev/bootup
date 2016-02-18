@@ -34,6 +34,12 @@
 			@endif
 		@endforeach
 	@endif
+	
+	@if(isset($recaptchakey))
+		<script>
+			var recaptchakey = '{!!$recaptchakey!!}';
+		</script>
+	@endif
 
 	@yield('head')
 </head>

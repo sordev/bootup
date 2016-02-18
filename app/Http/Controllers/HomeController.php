@@ -16,11 +16,7 @@ class HomeController extends Controller
 			['title'=>'Хамтдаа хөгжицгөөе','slide'=>asset('images/homeslides/1.jpg'),'cta'=>'Төсөл нэмэх','url'=>url('projects/add')],
 			['title'=>'Хамтдаа хөгжицгөөе','slide'=>asset('images/homeslides/1.jpg'),'cta'=>'Төсөл нэмэх','url'=>url('projects/add')],
 		];
-		
-		//Recaptcha
-		array_push($this->scripts['footer'],'https://www.google.com/recaptcha/api.js');
-		$recaptchakey = Setting::getSetting('recaptchakey');
-		
+
 		// Set metas for SEO
 		$this->metas = [
 			'title'=>'Бүүтап',
@@ -32,7 +28,6 @@ class HomeController extends Controller
 		$this->view = $this->BuildLayout();
 		$this->view
 			->withSlideshow($slideshow)
-			->with('recaptchakey',$recaptchakey)
 			;
 		return $this->view;
 	}

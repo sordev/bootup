@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 
 //user model
 use App\User;
+use App\UserSocial;
 
 //settings model
 use App\Setting;
@@ -41,12 +42,7 @@ class UserController extends Controller {
   {
 		$this->layout = 'user.register';
 		$this->metas['title'] = "Бүүтап бүртгэлийн хэсэг";
-		
-		array_push($this->scripts['footer'],'https://www.google.com/recaptcha/api.js');
-		
-		$recaptchakey = Setting::getSetting('recaptchakey');
-		$this->view = $this->BuildLayout()->with('recaptchakey',$recaptchakey);
-        
+		$this->view = $this->BuildLayout();
 		return $this->view;
   }
 
@@ -69,16 +65,16 @@ class UserController extends Controller {
 		
 		if ($v->fails() || $resp->isSuccess()==false){
 			if ($resp->isSuccess()==false){
-				$v->errors()->add('g-recaptcha', 'Би робот биш гэсэн чагтыг тэмдэглэнэ үү');
+				$v->errors()->add('g-recaptcha', 'Би машин биш гэсэн чагтыг тэмдэглэнэ үү');
 			}
-			return redirect()->back()->withErrors($v->errors());
+			return redirect()->back()->withErrors($v->errors())->withInput($request->except('password'));
 		}
 		
 		$user = new User;
 		$user->email = $request->input('email');
 		$user->password = Hash::make($request->input('password'));
-		$user->registration_url = 'local';
 		$user->register_ip = $_SERVER['REMOTE_ADDR'];
+		$user->registered_with = 'local';
 		$user->public = 0;
 		$user->status = 1;
 		$user->save();
@@ -124,63 +120,69 @@ class UserController extends Controller {
 			$email = $socialUser->email;
 			$name = $socialUser->name;
 			$nameArray = explode(' ',$name);
-			$fname = reset($nameArray);
-			$lname = str_replace($fname,'',trim($name));
-			$fb_id = $tw_id = $gp_id = $photo_url = '';
+			$firstname = reset($nameArray);
+			$lastname = str_replace($firstname,'',trim($name));
+			$fb_id = $tw_id = $gp_id = $photo_url = $local_photo_url = '';
 			$avatarSavePath = public_path('images/users/avatars');
 			switch ($provider) {
 				case 'facebook':
 					$fb_id = $socialUser->id;
 					$gender = $socialUser->user['gender'];
 					$photo_url = $socialUser->avatar_original;
-					
-					$user = User::where('fb_id',$fb_id);
 				break;
 				case 'twitter':
 					$tw_id = $socialUser->id;
 					$photo_url = $socialUser->avatar_original;
-					
-					$user = User::where('tw_id',$tw_id);
 				break;
 				case 'google':
 					$gp_id = $socialUser->id;
 					$gender = $socialUser->user['gender'];
 					$photo_url = $socialUser->avatar;
-					
-					$user = User::where('gp_id',$gp_id);
 				break;
 				default:
 				break;
 			}
+			$userSocial = UserSocial::where('social',$provider)->where('socialname',$socialUser->id);
 			if (!empty($photo_url)){
 				$photo_urlArray = parse_url($photo_url);
 				unset($photo_urlArray['query']);
 				$photo_url = $photo_urlArray['scheme'].'://'.$photo_urlArray['host'].$photo_urlArray['path'];
 			}
 			
-			if ($user->exists()){
-				$user = $user->first();
+			if ($userSocial->exists()){
+				$userId = $userSocial->get()->first()->user_id;
+				$user = User::find($userId);
 			} else {
 				//if not existing then just register
+				
 				$user = User::create([
 					'email'=>$email,
-					'usr_fname'=>$fname,
-					'usr_lname'=>$lname,
-					'registration_url'=>$provider,
-					'usr_ip'=>$request->getClientIp(),
-					'fb_id'=>$fb_id,
-					'tw_id'=>$tw_id,
-					'gp_id'=>$gp_id,
+					'firstname'=>$firstname,
+					'lastname'=>$lastname,
+					'registered_with'=>$provider,
+					'register_ip'=>$request->getClientIp(),
+					'public'=>0,
+					'status'=>1,
 				]);
-				$profile = new Profile;
+				
 				if (!empty($photo_url)){
 					$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
 					$destinationPath = public_path('images/users/avatars');
-					file_put_contents($destinationPath.'/'.$user->usr_id.'.'.$ext, fopen($photo_url, 'r'));
-					$profile->photo_url=$user->usr_id.'.'.$ext;
+					file_put_contents($destinationPath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
+					$local_photo_url=$user->id.'.'.$ext;
+					$user->avatar = $local_photo_url;
+					$user->save();
 				}
-				$profile->gender = $gender;
-				$user->profile()->save($profile);
+				$usersocial = new UserSocial;
+				$usersocial->user_id = $user->id;
+				$usersocial->social = $provider;
+				$usersocial->socialname = $socialUser->id;
+				$user->usersocial()->save($usersocial);
+				/*
+					'fb_id'=>$fb_id,
+					'tw_id'=>$tw_id,
+					'gp_id'=>$gp_id,
+				*/
 			}
 			Auth::login($user,true);
 		}
@@ -228,7 +230,7 @@ class UserController extends Controller {
 	}
 	
 	//logout
-	public function logout(Request $request){
+	public function logout(){
 		Auth::logout(); // log the user out of our application
 		return redirect('/user/login'); // redirect the user to the login screen
 	}

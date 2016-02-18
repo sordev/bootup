@@ -9,6 +9,7 @@ class CreateUsersSocialsTable extends Migration {
 	{
 		Schema::create('users_socials', function(Blueprint $table) {
 			$table->increments('id');
+			$table->integer('user_id');
 			$table->timestamps();
 			$table->string('social', 255);
 			$table->string('socialname', 255);

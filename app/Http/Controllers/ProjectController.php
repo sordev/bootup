@@ -21,6 +21,17 @@ class ProjectController extends Controller {
   {
     
   }
+  
+  public function add()
+  {
+    $this->layout = 'project.add';
+	$this->metas['title'] = "Төсөл нэмэх";
+	$this->view = $this->BuildLayout();
+	$this->view
+			->withUser($this->user)
+			;
+	return $this->view;
+  }
 
   /**
    * Store a newly created resource in storage.

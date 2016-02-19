@@ -69,8 +69,14 @@ abstract class Controller extends BaseController
 			]
 		];
 		if ($this->user){
+			$navigations['profile'] = [
+				['title'=>'Миний төслүүд','url'=>url('user/projects')],
+				['title'=>'Дэмжсэн төслүүд','url'=>url('user/support')],
+				['title'=>'Бүртгэлийн тохиргоо','url'=>url('user/edit/profile')],
+			];
+			
 			$navigations['user'] = [
-				['title'=>'Миний бүртгэл','url'=>url('user/profile')],
+				['title'=>'Миний бүртгэл','url'=>url('user/profile'),'child'=>$navigations['profile']],
 				['title'=>'Гарах','url'=>url('user/logout')],
 			];
 		}

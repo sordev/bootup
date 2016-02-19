@@ -16,7 +16,6 @@ use App\UserSocial;
 
 //settings model
 use App\Setting;
-use App\Profile;
 
 use Response;
 use Socialite;
@@ -40,6 +39,10 @@ class UserController extends Controller {
    */
   public function create()
   {
+		//if already logged in
+		if (Auth::check() || Auth::viaRemember()){
+			return redirect('/user/profile');
+		}
 		$this->layout = 'user.register';
 		$this->metas['title'] = "Бүүтап бүртгэлийн хэсэг";
 		$this->view = $this->BuildLayout();
@@ -79,11 +82,8 @@ class UserController extends Controller {
 		$user->status = 1;
 		$user->save();
 		
-		if (Auth::login($user)) {
-			return redirect('/user/profile');
-		} else {
-			// validation not successful, send back to form 
-			return redirect('/user/login');
+		if (Auth::attempt($user)) {
+			return redirect()->intended('defaultpage');
 		}
 		return redirect('/user/profile/'.$user->usr_id);
   }
@@ -220,7 +220,7 @@ class UserController extends Controller {
 			}
 			
 			if (Auth::attempt($userdata,$remember)) {
-				return redirect('/user/profile');
+				return redirect()->intended('defaultpage');
 			} else {
 				// validation not successful, send back to form 
 				return redirect()->back()->withErrors('Please check your email and/or password or register')->withInput();
@@ -244,6 +244,18 @@ class UserController extends Controller {
   public function show($id)
   {
     
+  }
+  
+  public function profile()
+  {
+	if($this->user){
+		$this->layout = 'user.profile';
+		$this->metas['title'] = "Миний бүртгэл";
+		$this->view = $this->BuildLayout();
+		return $this->view;
+	} else {
+		return redirect('/user/login');
+	}
   }
 
   /**
@@ -282,7 +294,7 @@ class UserController extends Controller {
 	public function editPassword(Request $request)
     {
         $this->layout = 'user.editpassword';
-		$this->metas['title'] = "Change Password";
+		$this->metas['title'] = "Нууц үг солих";
 		$this->view = $this->BuildLayout();
 		$return = '';
 		if (Auth::check() || Auth::viaRemember()){

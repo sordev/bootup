@@ -28,7 +28,7 @@ class User extends Model implements AuthenticatableContract{
 
 	public function role()
 	{
-		return $this->belongsToMany('Role');
+		return $this->belongsTo('App\Role');
 	}
 
 	public function attempts()

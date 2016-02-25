@@ -9,6 +9,7 @@ class DatabaseSeeder extends Seeder {
 	{
 		Model::unguard();
 		$this->call('Settings');
+		$this->call('Roles');
 		Model::reguard();
 	}
 }

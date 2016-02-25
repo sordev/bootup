@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 
 //user model
 use App\User;
+use App\Role;
 use App\UserSocial;
 
 //settings model
@@ -40,7 +41,7 @@ class UserController extends Controller {
   public function create()
   {
 		//if already logged in
-		if (Auth::check() || Auth::viaRemember()){
+		if ($this->user){
 			return redirect('/user/profile');
 		}
 		$this->layout = 'user.register';
@@ -81,10 +82,10 @@ class UserController extends Controller {
 		$user->public = 0;
 		$user->status = 1;
 		$user->save();
+		$role = new Role(['id'=>'2']);
+		$user->role()->save($role);
 		
-		if (Auth::attempt($user)) {
-			return redirect()->intended('defaultpage');
-		}
+		Auth::login($user,true);
 		return redirect('/user/profile/'.$user->usr_id);
   }
   

@@ -2,6 +2,19 @@
 
 Bootup is Laravel 5.2.x based crowdfunding opensource platform. Specifically made for Mongolian audience.
 
+## Installation
+
+There is no wizard for installation but here goes instruction how to install.
+1. Clone to your environment
+2. Rename .env.example to .env file. Place your credentials there.
+3. Run `composer update`
+4. Run `gulp`
+5. Run `php artisan migrate`
+6. Run `php artisan db:seed`
+After this you should be able to use the system.
+
+TODO generate admin user
+
 ## Technical Documentation /Mongolian Language/
 
 Technical documentation can be found at (https://docs.google.com/document/d/10PIjUP29qlmBHh8ZwMNcqYky6zyIxIZknjfBIP1-WvU/edit?usp=sharing).

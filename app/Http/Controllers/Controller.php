@@ -79,6 +79,15 @@ abstract class Controller extends BaseController
 				['title'=>'Миний бүртгэл','url'=>url('user/profile'),'child'=>$navigations['profile']],
 				['title'=>'Гарах','url'=>url('user/logout')],
 			];
+			
+			$navigations['admin'] = [
+				['title'=>'Төслүүд','url'=>url('admin/projects')],
+				['title'=>'Ангилалууд','url'=>url('admin/categories')],
+			];
+			
+			if ($this->user->role == 1){
+				$navigations['user'][] = ['title'=>'Админ цэс','url'=>url('admin'),'child'=>$navigations['admin']];
+			}
 		}
 		
 		$recaptchakey = Setting::getSetting('recaptchakey');

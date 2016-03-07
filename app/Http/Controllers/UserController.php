@@ -71,7 +71,7 @@ class UserController extends Controller {
 			if ($resp->isSuccess()==false){
 				$v->errors()->add('g-recaptcha', 'Би машин биш гэсэн чагтыг тэмдэглэнэ үү');
 			}
-			return redirect()->back()->withErrors($v->errors())->withInput($request->except('password'));
+			return redirect('/user/register')->back()->withErrors($v->errors())->withInput($request->except('password'));
 		}
 		
 		$user = new User;
@@ -81,9 +81,8 @@ class UserController extends Controller {
 		$user->registered_with = 'local';
 		$user->public = 0;
 		$user->status = 1;
+		$user->role = 2;
 		$user->save();
-		$role = new Role(['id'=>'2']);
-		$user->role()->save($role);
 		
 		Auth::login($user,true);
 		return redirect('/user/profile/'.$user->usr_id);
@@ -164,6 +163,7 @@ class UserController extends Controller {
 					'register_ip'=>$request->getClientIp(),
 					'public'=>0,
 					'status'=>1,
+					'role'=>2,
 				]);
 				
 				if (!empty($photo_url)){
@@ -179,11 +179,6 @@ class UserController extends Controller {
 				$usersocial->social = $provider;
 				$usersocial->socialname = $socialUser->id;
 				$user->usersocial()->save($usersocial);
-				/*
-					'fb_id'=>$fb_id,
-					'tw_id'=>$tw_id,
-					'gp_id'=>$gp_id,
-				*/
 			}
 			Auth::login($user,true);
 		}

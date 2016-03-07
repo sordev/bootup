@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration {
 			$table->string('active_token', 100)->nullable();
 			$table->tinyInteger('public');
 			$table->tinyInteger('status');
+			$table->tinyInteger('role');
 			$table->string('firstname', 255);
 			$table->string('lastname', 255);
 			$table->string('avatar', 255);

@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder {
 		Model::unguard();
 		$this->call('Settings');
 		$this->call('Roles');
+		$this->call('CategoryTypes');
 		Model::reguard();
 	}
 }

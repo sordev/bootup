@@ -24,6 +24,8 @@ class User extends Model implements AuthenticatableContract{
 	'lastname',
 	'avatar',
 	'bio',
+	'status',
+	'role',
 	];
 
 	public function role()
@@ -42,6 +44,13 @@ class User extends Model implements AuthenticatableContract{
 
 	public function usersocial(){
 		return $this->hasMany('App\UserSocial','id','user_id');
+	}
+	
+	public function isAdmin(){
+		if($this->role == 1){
+			return true;
+		}
+		return false;
 	}
 
 }

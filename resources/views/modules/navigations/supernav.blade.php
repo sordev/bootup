@@ -29,8 +29,8 @@
 		@foreach($navigations['user'] as $n)
 			@include('modules.navigations.item',['item'=>$n])
 		@endforeach
-		@include('modules.user.loginmodal',['title'=>'Нэвтрэх','id'=>'loginModal'])
-		@include('modules.user.registermodal',['title'=>'Бүртгүүлэх','id'=>'registerModal'])
+		@include('modules.modal',['title'=>'Нэвтрэх','id'=>'loginModal','modalbody'=>'modules.user.login'])
+		@include('modules.modal',['title'=>'Бүртгүүлэх','id'=>'registerModal','modalbody'=>'modules.user.register'])
 	  </ul>
 	  @endif
 	</div><!-- /.navbar-collapse -->

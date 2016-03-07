@@ -22,4 +22,12 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
 	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
 	
+	Route::group(['prefix' => 'admin','middleware' => ['auth', 'admin']], function () {
+		Route::get('categories/create/{id?}', 'CategoryController@create');
+		Route::post('categories/store', 'CategoryController@store');
+		Route::post('categories/update', 'CategoryController@update');
+		Route::get('categories/{type?}', 'CategoryController@index');
+		
+		
+	});
 });

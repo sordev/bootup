@@ -18,6 +18,7 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('user/projects', 'ProjectController@projects');
 	//Projects
 	Route::get('projects/add', 'ProjectController@add');
+	Route::post('projects/postnext', 'ProjectController@postNext');
 	//Forgot Password
 	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
 	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
@@ -27,7 +28,5 @@ Route::group(['middleware' => ['web']], function () {
 		Route::post('categories/store', 'CategoryController@store');
 		Route::post('categories/update', 'CategoryController@update');
 		Route::get('categories/{type?}', 'CategoryController@index');
-		
-		
 	});
 });

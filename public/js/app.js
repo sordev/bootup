@@ -15,7 +15,23 @@ jQuery(document).ready(function($j){
         }
     }
 
-	
+	function postNext(){
+		$(document).on('click','.next',function(e){
+			e.preventDefault();
+			f = $(this).closest('form');
+			formData = f.serialize();
+			step = f.find('.step').val();
+			btn = f.find('.btn');
+			switch(step){
+				case 'addproject':
+					ajaxCallback(formData, '/projects/postnext', function (d) {
+						console.log(d);
+					});
+				break
+			}
+		});
+	}
+	postNext();
 	
 });
 function callRecaptcha(){

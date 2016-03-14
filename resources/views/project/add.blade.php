@@ -34,22 +34,19 @@
 
 @section('content')
 	@include('errors.errors')
-	@if(!$user)
-		<div class="well well-lg step-register">
-			<h3>Бүртгүүлэх</h3>
-			<p>
-				Төслөө оруулахын тулд та эхлээд бүртгүүлсэн байх шаардлагатай. Тэгснээр та төслийн явцыг оруулах хянах эрхтэй болох юм. Түүнчлэн таныг төслийн эзэмшигч гэдгийг таны бүртгэл батлах болно.
-			</p>
-			@include('modules.user.register')
-		</div>
-	@else
-		<div class="well well-lg step-register">
-			<h3>Бүртгүүлэх</h3>
-			<p>
-				Төслөө оруулахын тулд та эхлээд бүртгүүлсэн байх шаардлагатай. Тэгснээр та төслийн явцыг оруулах хянах эрхтэй болох юм. Түүнчлэн таныг төслийн эзэмшигч гэдгийг таны бүртгэл батлах болно.
-			</p>
-			@include('modules.user.register')
-		</div>
-	@endif
-	
+	<div class="well well-lg projectsteps">
+		@if(!$user)
+			<div class="step-register">
+				<h3>Бүртгүүлэх</h3>
+				<p>
+					Төслөө оруулахын тулд та эхлээд бүртгүүлсэн байх шаардлагатай. Тэгснээр та төслийн явцыг оруулах хянах эрхтэй болох юм. Түүнчлэн таныг төслийн эзэмшигч гэдгийг таны бүртгэл батлах болно.
+				</p>
+				@include('modules.user.register')
+			</div>
+		@else
+			{!! Form::open(array('url'=>'/','method'=>'post','class'=>'')) !!}
+			@include('project.steps.addproject')
+			{!! Form::close() !!}
+		@endif
+	</div>
 @endsection

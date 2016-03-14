@@ -19,5 +19,18 @@ class Category extends Model {
         return $return->title;
     }
 	protected $guarded = [];
+	
+	public static function getCategoryOptions($type=null){
+		$return = [];
+		if($type != null){
+			$categories = self::where('type',$type)->orderBy('position','DESC')->get();
+			if($categories){
+				foreach ($categories as $c){
+					$return[$c->id] = $c->title;
+				}
+			}
+		}
+		return $return;
+	}
 
 }

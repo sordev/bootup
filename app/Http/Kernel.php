@@ -29,6 +29,8 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
+			// Adding tag strip in within web middleware
+            \App\Http\Middleware\TagstripMiddleware::class,
         ],
 
         'api' => [

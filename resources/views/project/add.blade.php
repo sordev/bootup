@@ -45,7 +45,9 @@
 			</div>
 		@else
 			{!! Form::open(array('url'=>'/','method'=>'post','class'=>'')) !!}
-			@include('project.steps.addproject')
+				<div class="projectstepcontainer">
+					@include('project.steps.addproject')
+				</div>
 			{!! Form::close() !!}
 		@endif
 	</div>

@@ -1,4 +1,6 @@
 <?php namespace App\Http\Controllers;
+use Validator;
+use View;
 use App\Category;
 use App\Project;
 use Illuminate\Http\Request;
@@ -28,6 +30,18 @@ class ProjectController extends Controller {
 	{
 	$this->layout = 'project.add';
 	$this->metas['title'] = "Төсөл нэмэх";
+	//for upload
+	array_push($this->scripts['footer'],'upload/jquery.ui.widget.js');
+	array_push($this->scripts['footer'],'upload/load-image.all.min.js');
+	array_push($this->scripts['footer'],'upload/canvas-to-blob.min.js');
+	array_push($this->scripts['footer'],'upload/jquery.iframe-transport.js');
+	array_push($this->scripts['footer'],'upload/jquery.fileupload.js');
+	array_push($this->scripts['footer'],'upload/jquery.fileupload-process.js');
+	array_push($this->scripts['footer'],'upload/jquery.fileupload-image.js');
+	array_push($this->styles,'jquery.fileupload.css');
+	//for cke
+	array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
+	
 	$this->view = $this->BuildLayout();
 
 	$this->view
@@ -38,6 +52,8 @@ class ProjectController extends Controller {
 	}
   
 	public function postNext(Request $request){
+		$return =[];
+		$return['status'] = false;
 		$step = $request->get('step');
 		switch($step){
 			case 'addproject':
@@ -48,26 +64,35 @@ class ProjectController extends Controller {
 				];
 				$v = Validator::make($request->all(), $rules);
 				if ($v->fails()){
-					return $v->errors();
+					$return['status'] = true;
+					$return['errors'] = $v->errors();
+				} else {
+					$project = new Project;
+					$project->title = $request->get('title');
+					$project->user_id = $this->user->id;
+					$project->slug = $request->get('slug');
+					//TODO project ids comma separated
+					$project->category_ids = $request->get('category_ids');
+					$project->save();
+					
+					$projectCategoryIds = explode(',',$project->category_ids);
+					$projectCategories = [];
+					foreach($projectCategoryIds as $pg){
+						$projectCategories[] = Category::find($pg)->title;
+					}
+					
+					$project->category = implode(', ',$projectCategories);
+					$addprojectdetail = View::make('project.steps.addprojectdetail')
+						->withProject($project)
+						->render()
+					;
+					$return['status'] = true;
+					$return['view'] = $addprojectdetail;
 				}
-				$project = new Project;
-				$project->title = $request->get('title');
-				$project->slug = $request->get('slug');
-				$project->category_ids = $request->get('category_ids');
-				$project->save();
-				
-				$addprojectdetail = View::make('project.steps.projectdetail')
-					->withSocialnav($socialnav)
-					->withCart($cart)
-					->withConfirmation($payment->ConfirmationNumber)
-					->withLocation($location)
-					->withCustomertype($this->getCustomerType())
-					->withCustomer($this->getCustomer())
-					->render();
-				
 			break;
 		}
 		
+		return $return;
 	}
 
   /**

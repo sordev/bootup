@@ -23,6 +23,13 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
 	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
 	
+	
+	Route::post('projects/upload/image', function(){
+		$options['upload_url'] = url('/images/projects/');
+		$options['upload_dir'] = public_path().'/images/projects/';
+		$upload_handler = new App\Http\Controllers\UploadController($options);
+	});
+	
 	Route::group(['prefix' => 'admin','middleware' => ['auth', 'admin']], function () {
 		Route::get('categories/create/{id?}', 'CategoryController@create');
 		Route::post('categories/store', 'CategoryController@store');

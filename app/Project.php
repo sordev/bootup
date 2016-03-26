@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Category;
+use App\User;
 
 class Project extends Model {
 
@@ -29,4 +31,29 @@ class Project extends Model {
 		return $this->hasMany('Payment', 'project_id');
 	}
 
+	public function getCategoriesAttribute()
+    {
+		$catIdArray = explode(',',$this->category_ids);
+		$categories = [];
+		foreach ($catIdArray as $cid){
+			$categories[] = Category::find($cid);
+		}
+        return $categories;
+    }
+
+	public function getTeamAttribute()
+    {
+		$team = [];
+		$teamleader = User::find($this->user_id);
+		if($teamleader){
+			$team[] = $teamleader;
+		}
+		if(!empty($this->team_members)){
+			$teamMembersArray = explode(',',$this->team_members);
+			foreach ($teamMembersArray as $tid){
+				$team[] = User::find($tid);
+			}
+		}
+        return $team;
+    }
 }

@@ -53,4 +53,12 @@ class User extends Model implements AuthenticatableContract{
 		return false;
 	}
 
+	public static function getUserbyid($id){
+		if(is_numeric($id)){
+			$return = User::find($id);
+		} else {
+			$return = User::where('username',$id)->first();
+		}
+		return $return;
+	}
 }

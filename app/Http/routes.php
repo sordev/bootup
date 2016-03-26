@@ -16,7 +16,9 @@ Route::group(['middleware' => ['web']], function () {
 	Route::post('user/update/profile/password', 'UserController@updatePassword');
 	//User Projects
 	Route::get('user/projects', 'ProjectController@projects');
+	Route::get('user/profile/{userid?}/projects', 'ProjectController@projects');
 	//Projects
+	Route::get('projects', 'ProjectController@projects');
 	Route::get('projects/add', 'ProjectController@add');
 	Route::post('projects/postnext', 'ProjectController@postNext');
 	//Forgot Password

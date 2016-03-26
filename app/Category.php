@@ -10,12 +10,9 @@ class Category extends Model {
 
 	protected $table = 'categories';
 	public $timestamps = true;
-	public function getTypeAttribute($value)
+	public function getTypetitleAttribute()
     {
-		if(\Route::getCurrentRoute()->getActionName() == 'App\Http\Controllers\CategoryController@create'){
-			return $value;
-		}
-		$return = CategoryType::where('id',$value)->first();
+		$return = CategoryType::where('id',$this->type)->first();
         return $return->title;
     }
 	protected $guarded = [];
@@ -33,4 +30,7 @@ class Category extends Model {
 		return $return;
 	}
 
+	public function getTypeslugAttribute(){
+		return CategoryType::find($this->type)->slug;
+	}
 }

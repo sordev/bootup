@@ -3,6 +3,7 @@ use Validator;
 use View;
 use App\Category;
 use App\Project;
+use App\User;
 use Illuminate\Http\Request;
 class ProjectController extends Controller {
 
@@ -11,10 +12,53 @@ class ProjectController extends Controller {
    *
    * @return Response
    */
-  public function index()
-  {
-    
-  }
+
+	public function getProjects(Request $request){
+		$projects = Project::orderBy('id','DESC');
+		if($request->is('user/projects') && $this->user){
+			$projects->where('user_id',$this->user->id);
+		}
+		$projects = $projects->paginate(8);
+		return $projects;
+	}
+
+	public function projects(Request $request,$userid=null){
+		$this->layout = 'project.list';
+		$this->metas['title'] = "Төслүүд";
+		//Request::is('user/projects*')
+
+		// General list
+		$projects = Project::orderBy('id','DESC');
+
+		// Public List
+		if($request->is('projects')){
+			$projects->where('status',1);
+		}
+
+		// User's own list
+		if($request->is('user/projects') && $this->user){
+			$this->metas['title'] = "Миний Төслүүд";
+			$projects->where('user_id',$this->user->id);
+		}
+
+		// User's list for public
+		if($request->is('user/profile/*/projects')){
+			$user = User::getUserbyid($userid);
+			$this->metas['title'] = $user->firstname." ".$user->lastname." -н Төслүүд";
+			$projects->where('status',1);
+		}
+
+		$projects = $projects->paginate(8);
+		
+		$this->view = $this->BuildLayout();
+		$this->view
+			->withProjects($projects)
+			;
+		return $this->view;
+	}
+
+	public function index(){
+	}
 
   /**
    * Show the form for creating a new resource.

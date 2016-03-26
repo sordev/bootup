@@ -241,18 +241,27 @@ class UserController extends Controller {
   {
     
   }
-  
-  public function profile()
-  {
-	if($this->user){
+
+	public function profile($id=null){
 		$this->layout = 'user.profile';
-		$this->metas['title'] = "Миний бүртгэл";
-		$this->view = $this->BuildLayout();
+		if($id!=null){
+			$user = User::getUserbyid($id);
+			if ($user){
+				$this->layout = 'user.profile';
+				$this->metas['title'] = $user->firstname." ".$user->lastname." -н бүртгэл";
+				$this->view = $this->BuildLayout();
+			} else {
+				$this->metas['title'] = "Хэрэглэгч олдсонгүй";
+				$this->view = $this->BuildLayout();
+			}
+		} else if($this->user){
+			$this->metas['title'] = "Миний бүртгэл";
+			$this->view = $this->BuildLayout();
+		} else {
+			return redirect('/user/login');
+		}
 		return $this->view;
-	} else {
-		return redirect('/user/login');
 	}
-  }
 
   /**
    * Show the form for editing the specified resource.

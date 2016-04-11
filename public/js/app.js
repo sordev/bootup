@@ -1,4 +1,5 @@
 jQuery(document).ready(function($j){
+	//ajaxcall function with return data
 	function ajaxCallback(f, u, c, t) {
 		t = typeof t !== 'undefined' ? t : 'POST';
         if (f) {
@@ -15,6 +16,24 @@ jQuery(document).ready(function($j){
         }
     }
 
+	//show error function, errors should be 'element':['errorText']
+	function showError(errors){
+		//clean errors first
+		$('.form-group').removeClass('has-error has-feedback');
+		$('.help-block.with-errors').remove();
+		//show errors
+		$.each(errors,function(i,v){
+			formgroup = $('#'+i).closest('.form-group');
+			errorblock = $('<div class="help-block with-errors"><ul class="list-unstyled"></ul></div>');
+			$.each(v,function(vi,vv){
+				errorblock.append('<li>'+vv+'</li>');
+			});
+			formgroup.append(errorblock);
+			formgroup.addClass('has-error has-feedback');
+		});
+	}
+
+	//for every step 
 	function postNext(){
 		$(document).on('click','.next',function(e){
 			e.preventDefault();
@@ -27,7 +46,7 @@ jQuery(document).ready(function($j){
 				case 'addproject':
 					ajaxCallback(formData, '/projects/postnext', function (d) {
 						if(d.status == false){
-							console.log(d);
+							showError(d.errors);
 						} else {
 							stepcontainer.html(d.view);
 							imageUpload('image');

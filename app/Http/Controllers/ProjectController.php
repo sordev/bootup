@@ -25,6 +25,7 @@ class ProjectController extends Controller {
 	public function projects(Request $request,$userid=null){
 		$this->layout = 'project.list';
 		$this->metas['title'] = "Төслүүд";
+		$edit = false;
 		//Request::is('user/projects*')
 
 		// General list
@@ -39,6 +40,8 @@ class ProjectController extends Controller {
 		if($request->is('user/projects') && $this->user){
 			$this->metas['title'] = "Миний Төслүүд";
 			$projects->where('user_id',$this->user->id);
+			$edit = true;
+			
 		}
 
 		// User's list for public
@@ -52,6 +55,7 @@ class ProjectController extends Controller {
 		
 		$this->view = $this->BuildLayout();
 		$this->view
+			->withEdit($edit)
 			->withProjects($projects)
 			;
 		return $this->view;
@@ -108,7 +112,7 @@ class ProjectController extends Controller {
 				];
 				$v = Validator::make($request->all(), $rules);
 				if ($v->fails()){
-					$return['status'] = true;
+					$return['status'] = false;
 					$return['errors'] = $v->errors();
 				} else {
 					$project = new Project;
@@ -155,10 +159,32 @@ class ProjectController extends Controller {
    * @param  int  $id
    * @return Response
    */
-  public function show($id)
-  {
-    
-  }
+	public function project($slug){
+		$project = Project::where('slug',$slug);
+		$status = null;
+		$edit = false;
+		if($project->exists()){
+			$project = $project->first();
+			$this->metas['title'] = $project->title;
+			$this->layout = 'project.view';
+		} else {
+			$this->metas['title'] = 'Төсөл олдсонгүй';
+			$this->layout = 'errors.404';
+			$status = "Таны хайсан төсөл олдсонгүй";
+			$project = null;
+		}
+		if($this->user && $project){
+			if($this->user->id == $project->user_id){
+				$edit = true;
+			}
+		}
+		$this->view = $this->BuildLayout();
+		return $this->view
+			->withStatus($status)
+			->withEdit($edit)
+			->withProject($project)
+		;
+	}
 
   /**
    * Show the form for editing the specified resource.
@@ -166,10 +192,34 @@ class ProjectController extends Controller {
    * @param  int  $id
    * @return Response
    */
-  public function edit($id)
-  {
-    
-  }
+	public function edit($id){
+		$project = Project::where('id',$id);
+		$status = null;
+		$edit = false;
+		if($project->exists()){
+			$project = $project->first();
+			if($this->user->id == $project->user_id){
+				$this->metas['title'] = $project->title;
+				$this->layout = 'project.edit';
+			} else {
+				$this->metas['title'] = 'Хандах эрхгүй';
+				$this->layout = 'errors.403';
+				$status = "Танд уг төслийг засах эрх байхгүй байна";
+			}
+		} else {
+			$this->metas['title'] = 'Төсөл олдсонгүй';
+			$this->layout = 'errors.404';
+			$status = "Таны хайсан төсөл олдсонгүй";
+			$project = null;
+		}
+		$this->view = $this->BuildLayout();
+		return $this->view
+			->withCategories(Category::getCategoryOptions(1))
+			->withStatus($status)
+			->withEdit($edit)
+			->withProject($project)
+		;
+	}
 
   /**
    * Update the specified resource in storage.

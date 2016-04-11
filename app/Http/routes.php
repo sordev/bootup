@@ -21,6 +21,12 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('projects', 'ProjectController@projects');
 	Route::get('projects/add', 'ProjectController@add');
 	Route::post('projects/postnext', 'ProjectController@postNext');
+	//Project
+	Route::get('project/{slug?}', 'ProjectController@project');
+	//Edit routes
+	Route::group(['middleware' => ['auth']], function () {
+		Route::get('edit/project/{id?}', 'ProjectController@edit');
+	});
 	//Forgot Password
 	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
 	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');

@@ -10,7 +10,11 @@
 		@foreach($projects as $p)
 			<div class="col-md-3">
 				<div class="project">
-					<h3 class="project-title">{{{$p->title}}}</h3>
+					<h3 class="project-title"><a href="{{{url('project/'.$p->slug)}}}">{{{$p->title}}}</a>
+						@if(isset($edit) && $edit == true)
+							<a href="{{{url('edit/project/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
+						@endif
+					</h3>
 					<div class="project-category">Ангилал: @include('modules.categories.list',['categories'=>$p->categories])</div>
 					<div class="project-teammembers">Төслийн гишүүд: @include('modules.user.list',['users'=>$p->team])</div>
 				</div>

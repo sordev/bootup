@@ -14,6 +14,9 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('user/profile/{id?}', 'UserController@profile');
 	Route::get('user/edit/profile/password', 'UserController@editPassword');
 	Route::post('user/update/profile/password', 'UserController@updatePassword');
+	
+	Route::post('user/search/modal', 'UserController@searchUserModal');
+	Route::post('user/search/list', 'UserController@searchUserList');
 	//User Projects
 	Route::get('user/projects', 'ProjectController@projects');
 	Route::get('user/profile/{userid?}/projects', 'ProjectController@projects');

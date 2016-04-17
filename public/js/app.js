@@ -16,21 +16,81 @@ jQuery(document).ready(function($j){
         }
     }
 
+	//prevent form submission for all form with btn with data-action
+	function preventFormSubmission(){
+		f = $('form');
+		$.each(f,function(i,v){
+			$.each($(v).find('button, .btn'),function(ii,vv){
+				aa = $(vv).data('action');
+				if(typeof aa !== 'undefined'){
+					$(document).on('submit',$(vv),function(e){
+						e.preventDefault();
+						//buttonActions(aa);
+					});
+				}
+			});
+		});
+	}
+	preventFormSubmission();
+
+	//action buttons
+	function buttonActions(){
+		
+		$(document).on('click','button, .btn',function(e){
+			
+			a = $(this).data('action');
+			f = $(this).closest('form');
+			if(typeof a !== 'undefined'){
+				showError();
+				e.preventDefault();
+				formData = f.serialize();
+				
+				switch(a){
+					case 'addTeamMember':
+						ajaxCallback(formData, '/user/search/modal', function (d) {
+							if(d.status == false){
+								//showError(d.errors);
+							} else {
+								if($('#searchusermodal').length == 0){
+									$('body').append(d.view);
+									preventFormSubmission();
+								}
+								$('#searchusermodal').modal('show');
+							}
+						});
+					break;
+					case 'searchUser':
+						ajaxCallback(formData, '/user/search/list', function (d) {
+							if(d.status == false){
+								showError(d.errors);
+							} else {
+								$('.userlistmodal').html(d.view);
+							}
+						});
+					break;
+				}
+			}
+		});
+	}
+	buttonActions();
+
 	//show error function, errors should be 'element':['errorText']
 	function showError(errors){
 		//clean errors first
 		$('.form-group').removeClass('has-error has-feedback');
 		$('.help-block.with-errors').remove();
 		//show errors
-		$.each(errors,function(i,v){
-			formgroup = $('#'+i).closest('.form-group');
-			errorblock = $('<div class="help-block with-errors"><ul class="list-unstyled"></ul></div>');
-			$.each(v,function(vi,vv){
-				errorblock.append('<li>'+vv+'</li>');
+		if(typeof errors !== 'undefined'){
+			$.each(errors,function(i,v){
+				formgroup = $('#'+i).closest('.form-group');
+				errorblock = $('<div class="help-block with-errors"><ul class="list-unstyled"></ul></div>');
+				$.each(v,function(vi,vv){
+					errorblock.append('<li>'+vv+'</li>');
+				});
+				formgroup.append(errorblock);
+				formgroup.addClass('has-error has-feedback');
 			});
-			formgroup.append(errorblock);
-			formgroup.addClass('has-error has-feedback');
-		});
+		}
 	}
 
 	//for every step 

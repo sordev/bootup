@@ -46,6 +46,7 @@ class Project extends Model {
 		$team = [];
 		$teamleader = User::find($this->user_id);
 		if($teamleader){
+			$teamleader->leader = true;
 			$team[] = $teamleader;
 		}
 		if(!empty($this->team_members)){

@@ -73,30 +73,33 @@ class ProjectController extends Controller {
   {
     
   }
-  
-	public function add()
-	{
-	$this->layout = 'project.add';
-	$this->metas['title'] = "Төсөл нэмэх";
-	//for upload
-	array_push($this->scripts['footer'],'upload/jquery.ui.widget.js');
-	array_push($this->scripts['footer'],'upload/load-image.all.min.js');
-	array_push($this->scripts['footer'],'upload/canvas-to-blob.min.js');
-	array_push($this->scripts['footer'],'upload/jquery.iframe-transport.js');
-	array_push($this->scripts['footer'],'upload/jquery.fileupload.js');
-	array_push($this->scripts['footer'],'upload/jquery.fileupload-process.js');
-	array_push($this->scripts['footer'],'upload/jquery.fileupload-image.js');
-	array_push($this->styles,'jquery.fileupload.css');
-	//for cke
-	array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
-	
-	$this->view = $this->BuildLayout();
 
-	$this->view
-		->withUser($this->user)
-		->withCategories(Category::getCategoryOptions(1))
-		;
-	return $this->view;
+	public function appendScriptStyle(){
+		//for upload
+		array_push($this->scripts['footer'],'upload/jquery.ui.widget.js');
+		array_push($this->scripts['footer'],'upload/load-image.all.min.js');
+		array_push($this->scripts['footer'],'upload/canvas-to-blob.min.js');
+		array_push($this->scripts['footer'],'upload/jquery.iframe-transport.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload-process.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload-image.js');
+		array_push($this->styles,'jquery.fileupload.css');
+		//for cke
+		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
+	}
+	public function add(){
+		$this->layout = 'project.add';
+		$this->metas['title'] = "Төсөл нэмэх";
+
+		$this->appendScriptStyle();
+
+		$this->view = $this->BuildLayout();
+
+		$this->view
+			->withUser($this->user)
+			->withCategories(Category::getCategoryOptions(1))
+			;
+		return $this->view;
 	}
   
 	public function postNext(Request $request){
@@ -193,6 +196,7 @@ class ProjectController extends Controller {
    * @return Response
    */
 	public function edit($id){
+		$this->appendScriptStyle();
 		$project = Project::where('id',$id);
 		$status = null;
 		$edit = false;

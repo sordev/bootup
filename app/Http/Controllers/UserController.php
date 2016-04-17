@@ -310,7 +310,7 @@ class UserController extends Controller {
 		}
 		return redirect('/user/login');
     }
-	
+
 	public function updatePassword(Request $request)
     {
 		$v = Validator::make($request->all(), [
@@ -345,7 +345,60 @@ class UserController extends Controller {
 		
 		return redirect()->back()->withStatus('Password Changed');
     }
-  
+
+	public function searchUserModal(){
+		$searchUserModal = view('modules.modal', ['id'=>'searchusermodal','title' => 'Хэрэглэгч хайх','modalbody'=>'modules.user.search'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $searchUserModal;
+		return $return;
+	}
+
+	public function searchUserList(Request $request){
+		$return['status'] = false;
+		$v = Validator::make($request->all(), [
+			'searchuserfield' => 'required'
+		]);
+		if ($v->fails()){
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+		} else {
+			//check if number
+			$f = $request->get('searchuserfield');
+			$userlist = [];
+			$v = Validator::make($request->all(), ['searchuserfield' => 'integer']);
+			if ($v->fails()){
+				// check if email
+				$v = Validator::make($request->all(), ['searchuserfield' => 'email']);
+				if ($v->fails()){
+					$return['status'] = true;
+					$return['query'] = $f;
+					$userlist = User::where('username','like','%'.$f.'%')
+						->orWhere('firstname','like','%'.$f.'%')
+						->orWhere('lastname','like','%'.$f.'%')
+						->get();
+				} else {
+					$return['status'] = true;
+					$userlist = User::where('email',$f)->get();
+				}
+			} else {
+				$return['status'] = true;
+				$userlist = User::where('id',$f)->get();
+			}
+			if($userlist->isEmpty()){
+				$return['status'] = false;
+				$return['errors'] = ['searchuserfield'=>['Хайлтанд тохирох хэрэглэгч олдсонгүй']];
+				$return['userlist'] = $userlist;
+			} else {
+				$return['view'] = view('modules.user.list',['users'=>$userlist,'add'=>true])->render();
+				$return['userlist'] = $userlist;
+			}
+		}
+		
+		return $return;
+	}
 }
 
 ?>

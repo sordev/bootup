@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Category;
 use App\User;
+use App\Goal;
 
 class Project extends Model {
 
@@ -18,7 +19,7 @@ class Project extends Model {
 
 	public function goal()
 	{
-		return $this->hasMany('Goal', 'project_id');
+		return $this->hasMany('App\Goal', 'project_id')->orderBy('phase');
 	}
 
 	public function reward()

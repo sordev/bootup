@@ -4,6 +4,7 @@ use View;
 use App\Category;
 use App\Project;
 use App\User;
+use App\Goal;
 use Illuminate\Http\Request;
 class ProjectController extends Controller {
 
@@ -86,6 +87,10 @@ class ProjectController extends Controller {
 		array_push($this->styles,'jquery.fileupload.css');
 		//for cke
 		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
+		
+		array_push($this->scripts['footer'],'../libraries/bower_components/moment/min/moment.min.js');
+		array_push($this->scripts['footer'],'../libraries/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js');
+		array_push($this->styles,'../libraries/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css');
 	}
 	public function add(){
 		$this->layout = 'project.add';
@@ -139,6 +144,32 @@ class ProjectController extends Controller {
 					;
 					$return['status'] = true;
 					$return['view'] = $addprojectdetail;
+				}
+			break;
+			case 'addprojectdetail':
+				$rules = [
+					'image' => 'required',
+					'video' => 'required',
+					'intro' => 'required',
+					'category_ids' => 'detail',
+				];
+				$v = Validator::make($request->all(), $rules);
+				if ($v->fails()){
+					$return['status'] = false;
+					$return['errors'] = $v->errors();
+				} else {
+					$project = Project::find($request->get('id'));
+					//Check if project is user's own
+					if($this->user->id == $project->user_id){
+						$project->image = $request->get('image');
+						$project->intro = $request->get('intro');
+						$project->video = $request->get('intro');
+						$project->detail = $request->get('detail');
+						$project->team_members = $request->get('team_members');
+						$project->save();
+					}
+					$return['status'] = true;
+					$return['message'] = 'Таны төсөл амжилттай шинэчилэгдлээ';
 				}
 			break;
 		}
@@ -246,7 +277,64 @@ class ProjectController extends Controller {
   {
     
   }
-  
+
+	public function addGoalModal(){
+		$addGoalModal = view('modules.modal', ['id'=>'addgoalmodal','title' => 'Төслийн зорилт нэмэх','modalbody'=>'modules.project.goal_add'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $addGoalModal;
+		return $return;
+	}
+
+	public function addGoal(Request $request){
+		$rules = [
+			'title' => 'required',
+			'description' => 'required',
+			'start' => 'required',
+			'end' => 'required',
+			'phase' => 'required',
+			'goal' => 'required',
+		];
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			$return['status'] = false;
+			$return['errors'] = $v->errors();
+		} else {
+			if($request->has('project_id')){
+				$project_id = $request->get('project_id');
+				$project = Project::find($project_id);
+				if($project && $project->user_id == $this->user->id){
+					$goal = new Goal;
+					$goal->title = $request->get('title');
+					$goal->project_id = $request->get('project_id');
+					$goal->description = $request->get('description');
+					$goal->start = $request->get('start');
+					$goal->end = $request->get('end');
+					$goal->phase = $request->get('phase');
+					$goal->goal = $request->get('goal');
+					$goal->save();
+					$goalDetail = View::make('modules.project.goal_list_item')
+						->with('g',$goal)
+						->with('remove',true)
+						->render()
+					;
+					$return['status'] = true;
+					$return['view'] = $goalDetail;
+				} else {
+					$return['status'] = false;
+					$return['uid'] = $this->user->id;
+					$return['project_id'] = $project_id;
+					$return['errors'] = ['Таны төсөл биш байна'];
+				}
+			} else {
+				$return['status'] = false;
+				$return['errors'] = ['Төслийн АйДи байхгүй байна'];
+			}
+			
+		}
+		return $return;
+	}
 }
 
 ?>

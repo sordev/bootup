@@ -16,9 +16,28 @@ jQuery(document).ready(function($j){
         }
     }
 
+	function initStartEnd() {
+        $('#start').datetimepicker({
+			disabledHours:false,
+			minDate: moment(),
+			format: 'YYYY/MM/DD'
+		});
+        $('#end').datetimepicker({
+			disabledHours:false,
+			format: 'YYYY/MM/DD',
+            useCurrent: false //Important! See issue #1075
+        });
+        $("#start").on("dp.change", function (e) {
+            $('#end').data("DateTimePicker").minDate(e.date);
+        });
+        $("#end").on("dp.change", function (e) {
+            //$('#end').data("DateTimePicker").maxDate(e.date);
+        });
+    };
+
 	//prevent form submission for all form with btn with data-action
 	function preventFormSubmission(){
-		f = $('form');
+		f = $('form.preventSubmit');
 		$.each(f,function(i,v){
 			$.each($(v).find('button, .btn'),function(ii,vv){
 				aa = $(vv).data('action');
@@ -37,16 +56,17 @@ jQuery(document).ready(function($j){
 	function buttonActions(){
 		
 		$(document).on('click','button, .btn',function(e){
-			
-			a = $(this).data('action');
-			f = $(this).closest('form');
+			btn = $(this);
+			a = btn.data('action');
+			f = btn.closest('form');
 			if(typeof a !== 'undefined'){
+				console.log('asdadasdasdas');
 				showError();
 				e.preventDefault();
 				formData = f.serialize();
 				
 				switch(a){
-					case 'addTeamMember':
+					case 'addTeamMemberModal':
 						ajaxCallback(formData, '/user/search/modal', function (d) {
 							if(d.status == false){
 								//showError(d.errors);
@@ -59,12 +79,63 @@ jQuery(document).ready(function($j){
 							}
 						});
 					break;
+					case 'addTeamMember':
+						userid = btn.data('userid');
+						li = btn.closest('li');
+						tm = $('.team_members').val();
+						tmarr = tm.split(',');
+						tl = $('.projectteammemberscontainer').data('teamleader');
+						if(userid != tl && $.inArray(""+userid+"",tmarr) < 0){
+							$('.projectteammemberslist>ul').append(li);
+							btn.html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Хасах');
+							btn.data('action','removeTeamMember');
+							tmarr.push(userid);
+							$('.team_members').val(tmarr.join());
+						};
+					break;
+					case 'removeTeamMember':
+						userid = btn.data('userid');
+						tm = $('.team_members').val();
+						tmarr = tm.split(',');
+						li = btn.closest('li');
+						li.remove();
+						i = tmarr.indexOf(""+userid+"");
+						if(i > -1){
+							tmarr.splice(i,1);
+						}
+						$('.team_members').val(tmarr.join());
+					break;
 					case 'searchUser':
 						ajaxCallback(formData, '/user/search/list', function (d) {
 							if(d.status == false){
 								showError(d.errors);
 							} else {
 								$('.userlistmodal').html(d.view);
+							}
+						});
+					break;
+					case 'addGoalModal':
+						ajaxCallback(formData, '/project/add/goalmodal', function (d) {
+							if(d.status == false){
+								//showError(d.errors);
+							} else {
+								if($('#addgoalmodal').length == 0){
+									$('body').append(d.view);
+									preventFormSubmission();
+								}
+								$('#addgoalmodal').modal('show');
+								initStartEnd();
+							}
+						});
+					break;
+					case 'addGoal':
+						projectid = $('.project_id').val();
+						ajaxCallback(formData+'&project_id='+projectid, '/project/add/goal', function (d) {
+							if(d.status == false){
+								showError(d.errors);
+							} else {
+								$('.projectgoalslist>ul').append(d.view);
+								$('#addgoalmodal').modal( 'hide' ).data( 'bs.modal', null );
 							}
 						});
 					break;
@@ -104,7 +175,17 @@ jQuery(document).ready(function($j){
 			stepcontainer = $('.projectstepcontainer');
 			switch(step){
 				case 'addproject':
-					ajaxCallback(formData, '/projects/postnext', function (d) {
+					ajaxCallback(formData, '/project/postnext', function (d) {
+						if(d.status == false){
+							showError(d.errors);
+						} else {
+							stepcontainer.html(d.view);
+							imageUpload('image');
+						}
+					});
+				break
+				case 'addprojectdetail':
+					ajaxCallback(formData, '/project/postnext', function (d) {
 						if(d.status == false){
 							showError(d.errors);
 						} else {
@@ -139,12 +220,14 @@ jQuery(document).ready(function($j){
 			});
 		});
 	
-	
+	if($('#image').length > 0){
+		imageUpload('image');
+	}
 	
 	function imageUpload(id){
 		if($('#upload_'+id).length > 0) {
 			$('#upload_'+id).fileupload({
-				url: '/projects/upload/image',
+				url: '/project/upload/image',
 				dataType: 'json',
 				autoUpload: false,
 				acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,

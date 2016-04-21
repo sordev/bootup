@@ -12,7 +12,7 @@
 				<div class="project">
 					<h3 class="project-title"><a href="{{{url('project/'.$p->slug)}}}">{{{$p->title}}}</a>
 						@if(isset($edit) && $edit == true)
-							<a href="{{{url('edit/project/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
+							<a href="{{{url('project/edit/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
 						@endif
 					</h3>
 					<div class="project-category">Ангилал: @include('modules.categories.list',['categories'=>$p->categories])</div>

@@ -46,7 +46,7 @@ abstract class Controller extends BaseController
 		$navigations = [
 			'super'=>[
 				['title'=>'Төслүүд','url'=>url('projects')],
-				['title'=>'Төсөл нэмэх','url'=>url('projects/add')],
+				['title'=>'Төсөл нэмэх','url'=>url('project/add')],
 				['title'=>'Бидний тухай','url'=>url('about/us')],
 			],
 			'user'=>[

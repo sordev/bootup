@@ -28,10 +28,17 @@ Route::group(['middleware' => ['web']], function () {
 	//Edit routes
 	Route::group(['middleware' => ['auth']], function () {
 		Route::get('project/add', 'ProjectController@add');
+		Route::get('project/edit/{id?}', 'ProjectController@edit');
+		
 		Route::post('project/postnext', 'ProjectController@postNext');
+		//Goal
 		Route::post('project/add/goalmodal', 'ProjectController@addGoalModal');
 		Route::post('project/add/goal', 'ProjectController@addGoal');
-		Route::get('project/edit/{id?}', 'ProjectController@edit');
+		Route::post('project/remove/goal', 'ProjectController@removeGoal');
+		//Reward
+		Route::post('project/add/rewardmodal', 'ProjectController@addRewardModal');
+		Route::post('project/add/reward', 'ProjectController@addReward');
+		Route::post('project/remove/reward', 'ProjectController@removeReward');
 	});
 	//Forgot Password
 	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
@@ -41,6 +48,12 @@ Route::group(['middleware' => ['web']], function () {
 	Route::post('project/upload/image', function(){
 		$options['upload_url'] = url('/images/projects/');
 		$options['upload_dir'] = public_path().'/images/projects/';
+		$upload_handler = new App\Http\Controllers\UploadController($options);
+	});
+
+	Route::post('project/upload/reward', function(){
+		$options['upload_url'] = url('/images/rewards/');
+		$options['upload_dir'] = public_path().'/images/rewards/';
 		$upload_handler = new App\Http\Controllers\UploadController($options);
 	});
 	

@@ -1,6 +1,6 @@
 <?php
 
-namespace Reward;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 

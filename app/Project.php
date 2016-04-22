@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Category;
 use App\User;
 use App\Goal;
+use App\Reward;
+use App\Payment;
 
 class Project extends Model {
 
@@ -24,12 +26,12 @@ class Project extends Model {
 
 	public function reward()
 	{
-		return $this->hasMany('Reward', 'project_id');
+		return $this->hasMany('App\Reward', 'project_id');
 	}
 
 	public function gateway()
 	{
-		return $this->hasMany('Payment', 'project_id');
+		return $this->hasMany('App\Payment', 'project_id');
 	}
 
 	public function getCategoriesAttribute()

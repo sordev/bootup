@@ -34,6 +34,17 @@ jQuery(document).ready(function($j){
             //$('#end').data("DateTimePicker").maxDate(e.date);
         });
     };
+	
+	function setDateInput() {
+		$.each($('.date'),function(i,v){
+			$(v).datetimepicker({
+				disabledHours:false,
+				minDate: moment(),
+				format: 'YYYY/MM/DD'
+			});
+		});
+	}
+	setDateInput();
 
 	//prevent form submission for all form with btn with data-action
 	function preventFormSubmission(){
@@ -64,7 +75,7 @@ jQuery(document).ready(function($j){
 				showError();
 				e.preventDefault();
 				formData = f.serialize();
-				
+				projectid = $('.project_id').val();
 				switch(a){
 					case 'addTeamMemberModal':
 						ajaxCallback(formData, '/user/search/modal', function (d) {
@@ -129,13 +140,62 @@ jQuery(document).ready(function($j){
 						});
 					break;
 					case 'addGoal':
-						projectid = $('.project_id').val();
 						ajaxCallback(formData+'&project_id='+projectid, '/project/add/goal', function (d) {
 							if(d.status == false){
 								showError(d.errors);
 							} else {
 								$('.projectgoalslist>ul').append(d.view);
 								$('#addgoalmodal').modal( 'hide' ).data( 'bs.modal', null );
+							}
+						});
+					break;
+					case 'removeGoal':
+						goalid = btn.data('goalid');
+						li = btn.closest('li');
+						ajaxCallback(formData+'&project_id='+projectid+'&goalid='+goalid, '/project/remove/goal', function (d) {
+							if(d.status == false){
+								showError(d.errors);
+							} else {
+								li.remove();
+							}
+						});
+					break;
+					case 'addRewardModal':
+						ajaxCallback(formData, '/project/add/rewardmodal', function (d) {
+							if(d.status == false){
+								//showError(d.errors);
+							} else {
+								if($('#addrewardmodal').length == 0){
+									$('body').append(d.view);
+									preventFormSubmission();
+								}
+								$('#addrewardmodal').modal('show');
+								
+								if($('#reward_image').length > 0){
+									imageUpload('reward_image','/project/upload/reward');
+								}
+								setDateInput();
+							}
+						});
+					break;
+					case 'addReward':
+						ajaxCallback(formData+'&project_id='+projectid, '/project/add/reward', function (d) {
+							if(d.status == false){
+								showError(d.errors);
+							} else {
+								$('.projectrewardslist>ul').append(d.view);
+								$('#addrewardmodal').modal( 'hide' ).data( 'bs.modal', null );
+							}
+						});
+					break;
+					case 'removeReward':
+						rewardid = btn.data('rewardid');
+						li = btn.closest('li');
+						ajaxCallback(formData+'&project_id='+projectid+'&rewardid='+rewardid, '/project/remove/reward', function (d) {
+							if(d.status == false){
+								showError(d.errors);
+							} else {
+								li.remove();
 							}
 						});
 					break;
@@ -221,13 +281,13 @@ jQuery(document).ready(function($j){
 		});
 	
 	if($('#image').length > 0){
-		imageUpload('image');
+		imageUpload('image','/project/upload/image');
 	}
 	
-	function imageUpload(id){
+	function imageUpload(id,url){
 		if($('#upload_'+id).length > 0) {
 			$('#upload_'+id).fileupload({
-				url: '/project/upload/image',
+				url: url,
 				dataType: 'json',
 				autoUpload: false,
 				acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,

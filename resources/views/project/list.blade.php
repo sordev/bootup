@@ -10,7 +10,7 @@
 		@foreach($projects as $p)
 			<div class="col-md-3">
 				<div class="project">
-					<h3 class="project-title"><a href="{{{url('project/'.$p->slug)}}}">{{{$p->title}}}</a>
+					<h3 class="project-title"><a href="{{{url('projects/'.$p->slug)}}}">{{{$p->title}}}</a>
 						@if(isset($edit) && $edit == true)
 							<a href="{{{url('project/edit/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
 						@endif

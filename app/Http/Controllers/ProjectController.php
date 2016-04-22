@@ -5,6 +5,7 @@ use App\Category;
 use App\Project;
 use App\User;
 use App\Goal;
+use App\Reward;
 use Illuminate\Http\Request;
 class ProjectController extends Controller {
 
@@ -332,6 +333,113 @@ class ProjectController extends Controller {
 				$return['errors'] = ['Төслийн АйДи байхгүй байна'];
 			}
 			
+		}
+		return $return;
+	}
+
+	public function removeGoal(Request $request){
+		$return['status'] = false;
+		$return['errors'] = [];
+		if($request->has('project_id')){
+			$project_id = $request->get('project_id');
+			$project = Project::find($project_id);
+			if($project && $project->user_id == $this->user->id){
+				$goalid = $request->get('goalid');
+				$goal = Goal::find($goalid);
+				if ($goal->project_id == $project_id){
+					$goal->delete();
+					$return['status'] = true;
+					$return['message'] = ['Зорилт устгагдлаа'];
+				}
+			} else {
+				$return['status'] = false;
+				$return['errors'] = ['Таны төсөл биш байна'];
+			}
+		} else {
+			$return['status'] = false;
+			$return['errors'] = ['Төслийн АйДи байхгүй байна'];
+		}
+		return $return;
+	}
+
+	public function addRewardModal(){
+		$addRewardModal = view('modules.modal', ['id'=>'addrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_add'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $addRewardModal;
+		return $return;
+	}
+
+	public function addReward(Request $request){
+		$rules = [
+			'title' => 'required',
+			'description' => 'required',
+			'value' => 'required',
+			'amount' => 'required',
+			'estimated_date' => 'required',
+		];
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			$return['status'] = false;
+			$return['errors'] = $v->errors();
+		} else {
+			if($request->has('project_id')){
+				$project_id = $request->get('project_id');
+				$project = Project::find($project_id);
+				if($project && $project->user_id == $this->user->id){
+					$reward = new Reward;
+					$reward->title = $request->get('title');
+					$reward->image = $request->get('reward_image');
+					$reward->project_id = $request->get('project_id');
+					$reward->description = $request->get('description');
+					$reward->value = $request->get('value');
+					$reward->amount = $request->get('amount');
+					$reward->estimated_date = $request->get('estimated_date');
+					$reward->save();
+					$rewardListItem = View::make('modules.project.reward_list_item')
+						->with('r',$reward)
+						->with('remove',true)
+						->render()
+					;
+					$return['status'] = true;
+					$return['view'] = $rewardListItem;
+				} else {
+					$return['status'] = false;
+					$return['uid'] = $this->user->id;
+					$return['project_id'] = $project_id;
+					$return['errors'] = ['Таны төсөл биш байна'];
+				}
+			} else {
+				$return['status'] = false;
+				$return['errors'] = ['Төслийн АйДи байхгүй байна'];
+			}
+			
+		}
+		return $return;
+	}
+	
+	public function removeReward(Request $request){
+		$return['status'] = false;
+		$return['errors'] = [];
+		if($request->has('project_id')){
+			$project_id = $request->get('project_id');
+			$project = Project::find($project_id);
+			if($project && $project->user_id == $this->user->id){
+				$rewardid = $request->get('rewardid');
+				$reward = Reward::find($rewardid);
+				if ($reward->project_id == $project_id){
+					$reward->delete();
+					$return['status'] = true;
+					$return['message'] = ['Зорилт устгагдлаа'];
+				}
+			} else {
+				$return['status'] = false;
+				$return['errors'] = ['Таны төсөл биш байна'];
+			}
+		} else {
+			$return['status'] = false;
+			$return['errors'] = ['Төслийн АйДи байхгүй байна'];
 		}
 		return $return;
 	}

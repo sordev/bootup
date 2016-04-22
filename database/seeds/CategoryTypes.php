@@ -12,7 +12,7 @@ class CategoryTypes extends Seeder
     public function run()
     {
         DB::table('category_types')->insert([
-			['title'=>'Project','slug'=>'project'],
+			['title'=>'Project','slug'=>'projects'],
 			['title'=>'Blog','slug'=>'blog'],
 		]);
     }

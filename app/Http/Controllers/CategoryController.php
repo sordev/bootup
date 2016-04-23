@@ -40,19 +40,21 @@ class CategoryController extends Controller {
    *
    * @return Response
    */
-  public function create($id=null)
-  {
-	  
-    $this->layout = 'categories.create';
-	$this->metas['title'] = "Ангилал нэмэх";
-	$this->view = $this->BuildLayout();
-	$this->view->with('category_type_options',$this->getCategoryTypeOptions());
-	if($id!=null){
-		$category = Category::find($id);
-		$this->view->withCategory($category);
+	public function create($id=null){
+		$this->layout = 'categories.create';
+		$this->metas['title'] = "Ангилал нэмэх";
+		if($id!=null){
+			$this->metas['title'] = "Ангилал засах";
+		}
+	   
+		$this->view = $this->BuildLayout();
+		$this->view->with('category_type_options',$this->getCategoryTypeOptions());
+		if($id!=null){
+			$category = Category::find($id);
+			$this->view->withCategory($category);
+		}
+		return $this->view;
 	}
-	return $this->view;
-  }
 
   /**
    * Store a newly created resource in storage.
@@ -86,48 +88,9 @@ class CategoryController extends Controller {
 	} else {
 		$category = Category::create($request->all());
 	}
-	
-	return redirect('admin/categories/create/'.$category->id);
+	return redirect('admin/categories/edit/'.$category->id)->with('message', 'Login Failed');
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function show($id)
-  {
-    
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function edit($id)
-  {
-    
-  }
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function update(Request $request)
-  {
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
   public function destroy($id)
   {
     

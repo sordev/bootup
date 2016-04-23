@@ -34,7 +34,56 @@ jQuery(document).ready(function($j){
             //$('#end').data("DateTimePicker").maxDate(e.date);
         });
     };
-	
+
+	function validate(){
+		$(document).on('submit','form',function(e){
+			v = validateRequired($(this));
+			if (v==false){
+				e.preventDefault();
+			} else {
+				//$(this).submit();
+			}
+		})
+		$(document).on('keyup','.required',function(){
+			f = $(this).closest('form')
+			v = validateRequired(f);
+		});
+		$(document).on('focus','.required',function(){
+			f = $(this).closest('form')
+			v = validateRequired(f);
+		});
+	}
+	validate();
+	function validateRequired(f){
+		var r = false;
+		var e = {};
+		var l = '';
+		$.each(f.find('.required'),function(i,v){
+			value=$.trim($(v).val());
+			console.log(value);
+			if (value == 0){
+				if($(v).siblings('label').length > 0){
+					l = $(v).siblings('label').html();
+				}
+				id = $(v).attr('id');
+				if (l){
+					e[id] = [''+l+' талбарыг бөглөнө үү'];
+				} else {
+					e[id] = ['Энэ талбарыг бөглөнө үү'];
+				}
+			}
+		});
+		console.log(e)
+		if ($.isEmptyObject(e)){
+			r = true;
+		} else {
+			showError(e);
+		}
+		
+		return r;
+	}
+	//validateRequired();
+
 	function setDateInput() {
 		$.each($('.date'),function(i,v){
 			$(v).datetimepicker({
@@ -210,6 +259,7 @@ jQuery(document).ready(function($j){
 		//clean errors first
 		$('.form-group').removeClass('has-error has-feedback');
 		$('.help-block.with-errors').remove();
+		//console.log(errors);
 		//show errors
 		if(typeof errors !== 'undefined'){
 			$.each(errors,function(i,v){

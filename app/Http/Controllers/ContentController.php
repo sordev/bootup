@@ -45,4 +45,28 @@ class ContentController extends Controller
 			;
 		return $this->view;
 	}
+
+	public function store(Request $request){
+		$rules = [
+			'title' => 'required',
+			'slug' => 'required|unique:contents',
+			'type' => 'required',
+			'category_id' => 'required',
+			'content' => 'required'
+		];
+		
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			return redirect()->back()->withErrors($v->errors())->withInput();
+		}
+		if($request->has('id')){
+			
+			$category->fill($request->all());
+			$category->save();
+		} else {
+			$category = Category::create($request->all());
+		}
+		
+		return redirect('admin/categories/edit/'.$category->id);
+	}
 }

@@ -5,6 +5,7 @@
 
 @section('content')
 	@include('errors.errors')
+	
 	@if(isset($category_types))
 		<p>Ангилалуудын төрөл</p>
 		@foreach($category_types as $ct)

@@ -3,7 +3,7 @@
 		$old = old($id);
 	?>
 @endif
-@if (!isset($required) && empty($required))
+@if (isset($required) && ($required==true || $required == 'required'))
 	<?php
 		$required = 'required';
 	?>
@@ -29,8 +29,15 @@
 			{!! Form::number($id,$old,['class'=>'form-control '.$required,'placeholder'=>$label,'min'=>'0','step'=>'0.01',]) !!}
 			<span class="input-group-addon">₮</span>
 		</div>
+		@elseif ($type=='checkbox')
+		<div class="checkbox">
+			<label>
+			{!! Form::checkbox($id,$old,false,['class'=>' '.$required,'placeholder'=>$label]) !!}
+				{{{$label}}}
+			</label>
+		</div>
 		@elseif ($type=='date')
-			{!! Form::text($id,$old,['class'=>'form-control date'.$required,'placeholder'=>$label]) !!}
+			{!! Form::text($id,$old,['class'=>'form-control date '.$required,'placeholder'=>$label]) !!}
 		@elseif ($type=='textarea')
 			{!! Form::textarea($id,$old,['class'=>'form-control '.$required,'placeholder'=>$label]) !!}
 			@if(isset($cke) && $cke==true)
@@ -39,7 +46,7 @@
 				</script>
 			@endif
 		@elseif ($type=='select')
-			{!! Form::select($id,$option,$old,['class'=>'form-control','placeholder'=>$label]) !!}
+			{!! Form::select($id,$option,$old,['class'=>'form-control '.$required,'placeholder'=>$label]) !!}
 		@endif
 		@if (isset($note) && !empty($note))
 			<p class="help-block">{{{$note}}}</p>

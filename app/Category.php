@@ -16,7 +16,7 @@ class Category extends Model {
         return $return->title;
     }
 	protected $guarded = [];
-	
+
 	public static function getCategoryOptions($type=null){
 		$return = [];
 		if($type != null){

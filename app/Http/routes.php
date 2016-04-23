@@ -58,9 +58,15 @@ Route::group(['middleware' => ['web']], function () {
 	});
 	
 	Route::group(['prefix' => 'admin','middleware' => ['auth', 'admin']], function () {
+		// Categories
 		Route::get('categories/create/{id?}', 'CategoryController@create');
 		Route::post('categories/store', 'CategoryController@store');
 		Route::post('categories/update', 'CategoryController@update');
 		Route::get('categories/{type?}', 'CategoryController@index');
+		// Contents
+		Route::get('content/create/{id?}', 'ContentController@create');
+		Route::post('content/store', 'ContentController@store');
+		Route::post('content/update', 'ContentController@update');
+		Route::get('content/{type?}', 'ContentController@index');
 	});
 });

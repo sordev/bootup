@@ -83,6 +83,7 @@ abstract class Controller extends BaseController
 			$navigations['admin'] = [
 				['title'=>'Төслүүд','url'=>url('admin/projects')],
 				['title'=>'Ангилалууд','url'=>url('admin/categories')],
+				['title'=>'Агуулгууд','url'=>url('admin/content')],
 			];
 			
 			if ($this->user->role == 1){

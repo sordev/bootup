@@ -1,17 +1,14 @@
-@if (!isset($old) && empty($old))
-	<?php
-		$old = old($id);
-	?>
-@endif
-@if (isset($required) && ($required==true || $required == 'required'))
-	<?php
-		$required = 'required';
-	?>
-@else
-	<?php
-		$required = '';
-	?>
-@endif
+<?php
+$required = '';
+if(isset($data) && !empty($data)){
+	$old = $data->$id;
+} else {
+	$old = old($id);
+}
+if (isset($required) && ($required==true || $required == 'required')){
+	$required = 'required';
+}
+?>
 
 <div class="form-group">
 	{!! Form::label($id,$label) !!}

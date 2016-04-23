@@ -1,11 +1,11 @@
 <?php
-//Home Route
-
-
 //Starting 5.2 web middleware has to be included
 Route::group(['middleware' => ['web']], function () {
+	//Home Route
 	Route::get('/', 'HomeController@index');
+
 	
+
 	//User Route
 	Route::match(['get', 'post'], '/user/login/{provider?}', 'UserController@login');
 	Route::get('user/register', 'UserController@create');
@@ -71,4 +71,6 @@ Route::group(['middleware' => ['web']], function () {
 		Route::post('content/update', 'ContentController@update');
 		Route::get('content/{type?}', 'ContentController@index');
 	});
+	
+	Route::get('{slug?}', 'ContentController@getContent');
 });

@@ -61,35 +61,34 @@ class CategoryController extends Controller {
    *
    * @return Response
    */
-  public function store(Request $request)
-  {
-	$rules = [
-		'title' => 'required|unique:categories',
-		'slug' => 'required|unique:categories',
-		'type' => 'required'
-	];
-	if($request->has('id')){
-		$category = Category::find($request->input('id'));
+	public function store(Request $request){
 		$rules = [
-			'title' => 'required|unique:categories,title,'.$category->id,
-			'slug' => 'required|unique:categories,slug,'.$category->id,
+			'title' => 'required|unique:categories',
+			'slug' => 'required|unique:categories',
 			'type' => 'required'
 		];
-	}
-	
-    $v = Validator::make($request->all(), $rules);
-	if ($v->fails()){
-		return redirect()->back()->withErrors($v->errors())->withInput();
-	}
-	if($request->has('id')){
+		if($request->has('id')){
+			$category = Category::find($request->input('id'));
+			$rules = [
+				'title' => 'required|unique:categories,title,'.$category->id,
+				'slug' => 'required|unique:categories,slug,'.$category->id,
+				'type' => 'required'
+			];
+		}
 		
-		$category->fill($request->all());
-		$category->save();
-	} else {
-		$category = Category::create($request->all());
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			return redirect()->back()->withErrors($v->errors())->withInput();
+		}
+		if($request->has('id')){
+			
+			$category->fill($request->all());
+			$category->save();
+		} else {
+			$category = Category::create($request->all());
+		}
+		return redirect('admin/categories/edit/'.$category->id)->with('message', 'Login Failed');
 	}
-	return redirect('admin/categories/edit/'.$category->id)->with('message', 'Login Failed');
-  }
 
   public function destroy($id)
   {

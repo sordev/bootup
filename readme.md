@@ -7,7 +7,7 @@ Bootup is Laravel 5.2.x based crowdfunding opensource platform. Specifically mad
 There is no wizard for installation but here goes instruction how to install.
 1. Clone to your environment
 2. Rename .env.example to .env file. Place your credentials there.
-3. Run `composer update`
+3. Run `composer update` && `composer update`
 4. Run `gulp`
 5. Run `php artisan migrate`
 6. Run `php artisan db:seed`

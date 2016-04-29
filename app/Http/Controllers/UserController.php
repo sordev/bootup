@@ -22,7 +22,20 @@ use Response;
 use Socialite;
 
 class UserController extends Controller {
-
+	
+	public function appendScriptStyle(){
+		//for upload
+		array_push($this->scripts['footer'],'upload/jquery.ui.widget.js');
+		array_push($this->scripts['footer'],'upload/load-image.all.min.js');
+		array_push($this->scripts['footer'],'upload/canvas-to-blob.min.js');
+		array_push($this->scripts['footer'],'upload/jquery.iframe-transport.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload-process.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload-image.js');
+		array_push($this->styles,'jquery.fileupload.css');
+		//for cke
+		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
+	}
   /**
    * Display a listing of the resource.
    *
@@ -55,8 +68,7 @@ class UserController extends Controller {
    *
    * @return Response
    */
-  public function store(Request $request)
-  {
+	public function store(Request $request){
 		$v = Validator::make($request->all(), [
 			'email' => 'required|unique:users|email',
 			'password' => 'required',
@@ -86,7 +98,7 @@ class UserController extends Controller {
 		
 		Auth::login($user,true);
 		return redirect('/user/profile/'.$user->usr_id);
-  }
+	}
   
   public function login(Request $request,$provider=null){
 		$this->layout = 'user.login';
@@ -123,7 +135,7 @@ class UserController extends Controller {
 			$firstname = reset($nameArray);
 			$lastname = str_replace($firstname,'',trim($name));
 			$fb_id = $tw_id = $gp_id = $photo_url = $local_photo_url = '';
-			$avatarSavePath = public_path('images/users/avatars');
+			$avatarSavePath = public_path('images/avatars');
 			switch ($provider) {
 				case 'facebook':
 					$fb_id = $socialUser->id;
@@ -167,9 +179,16 @@ class UserController extends Controller {
 				]);
 				
 				if (!empty($photo_url)){
+					//$img = Image::make($photo_url);
+					// now you are able to resize the instance
+					//$img->resize(320, 240);
+					// and insert a watermark for example
+					//$img->insert('public/watermark.png');
+					// finally we save the image as a new file
+					//$img->save($avatarSavePath.'/'.$user->id.'.jpg');
+					
 					$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
-					$destinationPath = public_path('images/users/avatars');
-					file_put_contents($destinationPath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
+					file_put_contents($avatarSavePath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
 					$local_photo_url=$user->id.'.'.$ext;
 					$user->avatar = $local_photo_url;
 					$user->save();
@@ -269,10 +288,16 @@ class UserController extends Controller {
    * @param  int  $id
    * @return Response
    */
-  public function edit($id)
-  {
-    
-  }
+	public function edit(){
+		$this->appendScriptStyle();
+		$this->layout = 'user.edit';
+		$this->metas['title'] = "Бүртгэлээ засварлах";
+		$this->view = $this->BuildLayout();
+
+		return $this->view
+			->withUser($this->user)
+		;
+	}
 
   /**
    * Update the specified resource in storage.
@@ -280,24 +305,33 @@ class UserController extends Controller {
    * @param  int  $id
    * @return Response
    */
-  public function update($id)
-  {
-    
-  }
+	public function update(Request $request){
+		$rules = [
+			'lastname' => 'required',
+			'firstname' => 'required',
+			'username' => 'required',
+			'email' => 'required',
+			'public' => 'required'
+		];
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			$return['errors'] = $v->errors();
+		} else {
+			$this->user->lastname = $request->get('lastname');
+			$this->user->firstname = $request->get('firstname');
+			$this->user->username = $request->get('username');
+			$this->user->email = $request->get('email');
+			$this->user->public = $request->get('public');
+			$this->user->avatar = $request->get('avatar');
+			$this->user->bio = $request->get('bio');
+			$this->user->save();
+			
+			$return['errors'] = ['Таны мэдээлэл шинэчилэгдлээ'];
+		}
+		return redirect()->back()->withErrors($return['errors']);
+	}
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function destroy($id)
-  {
-    
-  }
-  
-	public function editPassword(Request $request)
-    {
+	public function editPassword(Request $request){
         $this->layout = 'user.editpassword';
 		$this->metas['title'] = "Нууц үг солих";
 		$this->view = $this->BuildLayout();
@@ -311,8 +345,7 @@ class UserController extends Controller {
 		return redirect('/user/login');
     }
 
-	public function updatePassword(Request $request)
-    {
+	public function updatePassword(Request $request){
 		$v = Validator::make($request->all(), [
 			'password_new' => 'required|min:5|max:16|confirmed',
 			'password_new_confirmation' => ''

@@ -9,6 +9,7 @@ use App\Category;
 use App\Content;
 use App\CategoryType;
 use App\ContentType;
+use App\User;
 use Validator;
 
 class ContentController extends Controller
@@ -18,8 +19,8 @@ class ContentController extends Controller
 		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
 	}
 	
-	public function getContent($slug=null){
-		$content = Content::where('slug',$slug)->first();
+	public function item($slug=null){
+		$content = Content::where('slug',$slug)->where('status','publish')->first();
 		if ($content){
 			$this->layout = 'content.item';
 			$this->metas['title'] = $content->title;
@@ -29,19 +30,47 @@ class ContentController extends Controller
 			abort('404');
 		}
 	}
-	
-	public function index($type = null){
+
+	public function getContents($request){
+		$contents = Content::orderBy('created_at','desc')->where('status','publish');
+		
+		if($request->has('title')){
+			$contents->where('title','like','%'.$request->get('title').'%');
+		}
+		if($request->has('category_id')){
+			$contents->where('title',$request->get('category_id'));
+		}
+		if($request->has('type')){
+			$contents->where('title',$request->get('type'));
+		}
+		if($request->has('status')){
+			$status = $request->get('status');
+			if($status == 'trashed'){
+				$contents->onlyTrashed();
+			} else {
+				$contents->where('status',$request->get('status'));
+			}
+		}
+		$contents = $contents->paginate(15)->appends($request->except('page'));
+		foreach($contents as $content){
+			$content->category = Category::find($content->category_id)->title;
+			$content->typetitle = ContentType::find($content->type)->title;
+		}
+		
+		return $contents;
+	}
+
+	public function index(Request $request){
 		$this->layout = 'content.index';
 		$this->metas['title'] = "Агуулгын удирдлага";
 		$this->view = $this->BuildLayout();
-		if($type == null){
-			$contentTypes = ContentType::all();
-			return $this->view->withContentTypes($contentTypes);
-		} else {
-			$typId = CategoryType::where('slug',$type)->first()->id;
-			$categories = Category::where('type',$typId)->orderBy('position')->get();
-			return $this->view->withCategories($categories);
-		}
+		$contentTypes = ContentType::all();
+		$categories = Category::getCategoryOptions('2');
+		return $this->view
+			->withCategories(Category::getCategoryOptions(2))
+			->withContentTypeOptions(ContentType::getContentTypeOptions())
+			->withContents($this->getContents($request))
+		;
 	}
 
     public function create($id=null){
@@ -62,6 +91,21 @@ class ContentController extends Controller
 			$this->view->withContent($content);
 		}
 		return $this->view;
+	}
+
+	public function delete($id=null){
+		$content = Content::find($id)->delete();
+		return redirect()->back()->withErrors(['error'=>['Агуулга хогийн саванд орлоо']]);
+	}
+
+	public function destroy($id=null){
+		$content = Content::where('id',$id)->forceDelete();
+		return redirect()->back()->withErrors(['error'=>['Агуулга устгагдлаа']]);
+	}
+
+	public function restore($id=null){
+		$content = Content::where('id',$id)->restore();
+		return redirect()->back()->withErrors(['error'=>['Агуулга сэргээгдлээ']]);
 	}
 
 	public function store(Request $request){

@@ -1,12 +1,16 @@
 <?php
-$required = '';
+
 if(isset($data) && !empty($data)){
 	$old = $data->$id;
+} elseif(Request::has($id)) {
+	$old = Request::get($id);
 } else {
 	$old = old($id);
 }
 if (isset($required) && ($required==true || $required == 'required')){
 	$required = 'required';
+} else {
+	$required = '';
 }
 ?>
 

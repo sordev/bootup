@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Roles');
 		$this->call('CategoryTypes');
 		$this->call('ContentTypes');
+		$this->call('Categories');
+		$this->call('Content');
 		Model::reguard();
 	}
 }

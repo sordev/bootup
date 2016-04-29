@@ -1,6 +1,6 @@
 <?php
 //Starting 5.2 web middleware has to be included
-Route::group(['middleware' => ['web']], function () {
+Route::group(['middleware' => ['web','striptags']], function () {
 	//Home Route
 	Route::get('/', 'HomeController@index');
 
@@ -12,8 +12,10 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('user/logout', 'UserController@logout');
 	Route::post('user/store', 'UserController@store');
 	Route::get('user/profile/{id?}', 'UserController@profile');
-	Route::get('user/edit/profile/password', 'UserController@editPassword');
-	Route::post('user/update/profile/password', 'UserController@updatePassword');
+	
+	//Forgot Password
+	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
+	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
 	
 	Route::post('user/search/modal', 'UserController@searchUserModal');
 	Route::post('user/search/list', 'UserController@searchUserList');
@@ -39,25 +41,36 @@ Route::group(['middleware' => ['web']], function () {
 		Route::post('project/add/rewardmodal', 'ProjectController@addRewardModal');
 		Route::post('project/add/reward', 'ProjectController@addReward');
 		Route::post('project/remove/reward', 'ProjectController@removeReward');
+		
+		//User profile edits
+		Route::get('user/edit/profile', 'UserController@edit');
+		Route::post('user/update/profile', 'UserController@update');
+		
+		Route::get('user/edit/profile/password', 'UserController@editPassword');
+		Route::post('user/update/profile/password', 'UserController@updatePassword');
 	});
-	//Forgot Password
-	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
-	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
+	
 	
 	
 	Route::post('project/upload/image', function(){
-		$options['upload_url'] = url('/images/projects/');
-		$options['upload_dir'] = public_path().'/images/projects/';
+		$options['upload_url'] = url('/images/project/');
+		$options['upload_dir'] = public_path().'/images/project/';
 		$upload_handler = new App\Http\Controllers\UploadController($options);
 	});
 
 	Route::post('project/upload/reward', function(){
-		$options['upload_url'] = url('/images/rewards/');
-		$options['upload_dir'] = public_path().'/images/rewards/';
+		$options['upload_url'] = url('/images/reward/');
+		$options['upload_dir'] = public_path().'/images/reward/';
 		$upload_handler = new App\Http\Controllers\UploadController($options);
 	});
-	
-	Route::group(['prefix' => 'admin','middleware' => ['auth', 'admin']], function () {
+
+	Route::post('user/upload/avatar', function(){
+		$options['upload_url'] = url('/images/avatar/');
+		$options['upload_dir'] = public_path().'/images/avatar/';
+		$upload_handler = new App\Http\Controllers\UploadController($options);
+	});
+
+	Route::group(['prefix' => 'admin','middleware' => ['auth', 'admin','except'=>'striptags']], function () {
 		// Categories
 		Route::get('categories/create', 'CategoryController@create');
 		Route::get('categories/edit/{id?}', 'CategoryController@create');
@@ -67,10 +80,13 @@ Route::group(['middleware' => ['web']], function () {
 		// Contents
 		Route::get('content/create', 'ContentController@create');
 		Route::get('content/edit/{id?}', 'ContentController@create');
+		Route::get('content/delete/{id?}', 'ContentController@delete');
+		Route::get('content/destroy/{id?}', 'ContentController@destroy');
+		Route::get('content/restore/{id?}', 'ContentController@restore');
 		Route::post('content/store', 'ContentController@store');
 		Route::post('content/update', 'ContentController@update');
 		Route::get('content/{type?}', 'ContentController@index');
 	});
 	
-	Route::get('{slug?}', 'ContentController@getContent');
+	Route::get('{slug?}', 'ContentController@item');
 });

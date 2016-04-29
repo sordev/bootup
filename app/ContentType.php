@@ -11,7 +11,7 @@ class ContentType extends Model
 		$types = self::all();
 		if($types){
 			foreach ($types as $t){
-				$return[$t->uniqid] = $t->title;
+				$return[$t->id] = $t->title;
 			}
 		}
 		return $return;

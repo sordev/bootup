@@ -8,26 +8,16 @@
 		</ul>
 		Мөн та төслөө оруулахаас өмнө дүрэм журам, үйлчилгээний нөхцөл зэрэгтэй сайтар танилцахыг зөвлөж байна.
 		<div class="row">
-			<div class="col-md-3">
-				<div class="well">
-					FAQ Асуулт хариулт
+			@foreach($content_data as $cd)
+				<div class="col-md-3">
+					<div class="well">
+						<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#{{{$cd['id']}}}">
+							{{{$cd['title']}}}
+						</button>
+						@include('modules.modal',['id'=>$cd['id'],'modalbody'=>'content.modalitem','title'=>$cd['title'],'vars'=>['content'=>$cd['content']]])
+					</div>
 				</div>
-			</div>
-			<div class="col-md-3">
-				<div class="well">
-					Төслийн шалгуур
-				</div>
-			</div>
-			<div class="col-md-3">
-				<div class="well">
-				Хөрөнгө оруулах
-				</div>
-			</div>
-			<div class="col-md-3">
-				<div class="well">
-				Үйлчилгээний нөхцөл
-				</div>
-			</div>
+			@endforeach
 		</div>
 	</p>
 @endsection

@@ -3,6 +3,7 @@ use Validator;
 use View;
 use App\Category;
 use App\Project;
+use App\Content;
 use App\User;
 use App\Goal;
 use App\Reward;
@@ -88,7 +89,7 @@ class ProjectController extends Controller {
 		array_push($this->styles,'jquery.fileupload.css');
 		//for cke
 		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
-		
+		//for datetimepicker
 		array_push($this->scripts['footer'],'../libraries/bower_components/moment/min/moment.min.js');
 		array_push($this->scripts['footer'],'../libraries/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js');
 		array_push($this->styles,'../libraries/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css');
@@ -101,9 +102,17 @@ class ProjectController extends Controller {
 
 		$this->view = $this->BuildLayout();
 
+		$contentData = [
+			['id'=>'faq','title'=>'FAQ Асуулт хариулт','content'=>Content::getContent('faq')],
+			['id'=>'requirment','title'=>'Төслийн шалгуур','content'=>Content::getContent('requirment')],
+			['id'=>'funding','title'=>'Хөрөнгө оруулах','content'=>Content::getContent('funding')],
+			['id'=>'tos','title'=>'Үйлчилгээний нөхцөл','content'=>Content::getContent('tos')],
+		];
+
 		$this->view
 			->withUser($this->user)
 			->withCategories(Category::getCategoryOptions(1))
+			->withContentData($contentData)
 			;
 		return $this->view;
 	}

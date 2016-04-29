@@ -47,7 +47,7 @@ abstract class Controller extends BaseController
 			'super'=>[
 				['title'=>'Төслүүд','url'=>url('projects')],
 				['title'=>'Төсөл нэмэх','url'=>url('project/add')],
-				['title'=>'Бидний тухай','url'=>url('about/us')],
+				['title'=>'Бидний тухай','url'=>url('about-us')],
 			],
 			'user'=>[
 				['title'=>'Нэвтрэх','url'=>'#','attributes'=>[
@@ -63,8 +63,8 @@ abstract class Controller extends BaseController
 			],
 			'about'=>[
 				['title'=>'Блог','url'=>url('blog')],
-				['title'=>'Хамтран ажиллагсад','url'=>url('about/partners')],
-				['title'=>'Дэмжигчид','url'=>url('about/supporters')],
+				['title'=>'Хамтран ажиллагсад','url'=>url('about-partners')],
+				['title'=>'Дэмжигчид','url'=>url('about-supporters')],
 				['title'=>'Үйлчилгээний нөхцөл','url'=>url('tos')],
 			]
 		];

@@ -60,8 +60,7 @@ jQuery(document).ready(function($j){
 		var l = '';
 		$.each(f.find('.required'),function(i,v){
 			value=$.trim($(v).val());
-			console.log(value);
-			if (value == 0){
+			if (value == ''){
 				if($(v).siblings('label').length > 0){
 					l = $(v).siblings('label').html();
 				}
@@ -332,6 +331,10 @@ jQuery(document).ready(function($j){
 	
 	if($('#image').length > 0){
 		imageUpload('image','/project/upload/image');
+	}
+	
+	if($('#avatar').length > 0){
+		imageUpload('avatar','/user/upload/avatar');
 	}
 	
 	function imageUpload(id,url){

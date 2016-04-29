@@ -5,20 +5,29 @@
 
 @section('content')
 	@include('errors.errors')
-	@if(isset($content_types))
-		<h4>Төрлөө сонгоод харна уу</h4>
-		@foreach($content_types as $ct)
-			<a href="{{{url('admin/content/'.$ct->uniqid)}}}" class="btn btn-default">{{{$ct->title}}}</a>
-		@endforeach
-	@endif
+	@include('content.filter')
 	@if(isset($contents) && !empty($contents))
 		<table class="table table-striped">
-			<tr><th>ID</th><th>Дараалал</th><th>Нэр</th><th>Слаг</th><th>Төрөл</th></tr>
-			@foreach($content_types as $c)
+			<tr><th>ID</th><th>Гарчиг</th><th>Төлөв</th><th>Ангилал</th><th>Төрөл</th><th>Үйлдэл</th></tr>
+			@foreach($contents as $c)
 			<tr>
-				<td>{{{$c->id}}}</td><td>{{{$c->position}}}</td><td>{{{$c->title}}}</td><td>{{{$c->slug}}}</td><td>{{{$c->typetitle}}}</td>
+				<td>{{{$c->id}}}</td><td>{{{$c->title}}}</td><td>{{{$c->status}}}</td><td>{{{$c->category}}}</td><td>{{{$c->typetitle}}}</td>
+				<td>
+					<a href="{{{url('admin/content/edit/'.$c->id)}}}">Засах</a> | 
+					
+					@if($c->trashed())
+						<a href="{{{url('admin/content/restore/'.$c->id)}}}">Сэргээх</a> |
+					@else
+						<a href="{{{url('admin/content/delete/'.$c->id)}}}">Хогийн саванд хийх</a> |
+					@endif
+					
+					<a href="{{{url('admin/content/destroy/'.$c->id)}}}">Устгах</a>
+				</td>
 			</tr>
 			@endforeach
+			<tfoot>
+				{!! $contents->links() !!}
+			</tfoot>
 		</table>
 	@endif
 @endsection

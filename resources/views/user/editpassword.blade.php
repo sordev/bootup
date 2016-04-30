@@ -5,6 +5,7 @@
 @endsection
 
 @section('header')
+	@parent
 	<p>
 		Нууц үгээ солих.
 	</p>

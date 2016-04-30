@@ -1,5 +1,6 @@
 ﻿@extends('layouts.default')
 @section('header')
+	@parent
 	@include('content.actions')
 @endsection
 

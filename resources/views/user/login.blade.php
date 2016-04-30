@@ -1,6 +1,7 @@
 @extends('layouts.default')
 
 @section('header')
+	@parent
 	<p>Тавтай морил, хэрэглэгчийн хэсэгтээ нэвтрэнэ үү.</p>
 @endsection
 

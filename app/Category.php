@@ -34,4 +34,8 @@ class Category extends Model {
 	public function getTypeslugAttribute(){
 		return CategoryType::find($this->type)->slug;
 	}
+
+	public function getUrlAttribute(){
+		return url($this->typeslug.'/category/'.$this->slug);
+	}
 }

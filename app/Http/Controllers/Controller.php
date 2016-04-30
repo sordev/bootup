@@ -22,7 +22,7 @@ abstract class Controller extends BaseController
 	public $user;
 
 	public function __construct(){
-		$this->styles = ['app.css','main.css'];
+		$this->styles = ['app.css','all.css'];
 		$this->layout = 'layouts.default';
 		$this->user = Auth::user();
 		$this->scripts = [
@@ -66,8 +66,19 @@ abstract class Controller extends BaseController
 				['title'=>'Хамтран ажиллагсад','url'=>url('about-partners')],
 				['title'=>'Дэмжигчид','url'=>url('about-supporters')],
 				['title'=>'Үйлчилгээний нөхцөл','url'=>url('tos')],
+			],
+			'help'=>[
+				['title'=>'Түгээмэл асуулт, хариулт','url'=>url('faq')],
+				['title'=>'Хэрхэн хөрөнгө оруулах','url'=>url('funding')],
+				['title'=>'Төслийн шалгуур','url'=>url('requirment')]
 			]
 		];
+		
+		$categories = \App\Category::where('type',1)->get();
+		foreach($categories as $c){
+			$navigations['categories'][]=['title'=>$c->title,'url'=>$c->url];
+		}
+
 		if ($this->user){
 			$navigations['profile'] = [
 				['title'=>'Миний төслүүд','url'=>url('user/projects')],

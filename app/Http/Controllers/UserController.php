@@ -267,18 +267,18 @@ class UserController extends Controller {
 			$user = User::getUserbyid($id);
 			if ($user){
 				$this->layout = 'user.profile';
-				$this->metas['title'] = $user->firstname." ".$user->lastname." -н бүртгэл";
+				$this->metas['title'] = $user->fullname." -н бүртгэл";
 				$this->view = $this->BuildLayout();
+				return $this->view->withUser($user);
 			} else {
 				$this->metas['title'] = "Хэрэглэгч олдсонгүй";
-				$this->view = $this->BuildLayout();
 			}
 		} else if($this->user){
 			$this->metas['title'] = "Миний бүртгэл";
-			$this->view = $this->BuildLayout();
 		} else {
 			return redirect('/user/login');
 		}
+		$this->view = $this->BuildLayout();
 		return $this->view;
 	}
 

@@ -29,7 +29,7 @@ class Project extends Model {
 		return $this->hasMany('App\Reward', 'project_id');
 	}
 
-	public function gateway()
+	public function payment()
 	{
 		return $this->hasMany('App\Payment', 'project_id');
 	}
@@ -44,8 +44,52 @@ class Project extends Model {
         return $categories;
     }
 
-	public function getTeamAttribute()
+	public function getDaysLeftAttribute()
     {
+		$firstGoal = $this->goal()->orderBy('start')->first()->start;
+		$start = new \Carbon\Carbon($firstGoal);
+		$now = \Carbon\Carbon::now();
+		$daysleft = 0;
+		if($start->diff($now)->days >= 1){
+			$daysleft = $start->diff($now)->days;
+		}
+		return $daysleft;
+    }
+
+	public function getTotalGoalAttribute(){
+		$goals = $this->goal;
+		$total = 0;
+		foreach ($goals as $g){
+			$total = $total+($g->goal);
+		}
+		return $total;
+	}
+
+	public function getPercentageAttribute(){
+		$totalGoal = $this->totalgoal;
+		$totalPayment = $this->totalpayment;
+		
+		$percentage = $totalPayment*100/$totalGoal;
+		if($percentage > 100){
+			$percentage = 100;
+		}
+		return (int)$percentage;
+	}
+
+	public function getTotalPaymentAttribute(){
+		$payments = $this->payment;
+		$total = 0;
+		foreach ($payments as $p){
+			$total = $total+($p->value);
+		}
+		return $total;
+	}
+
+	public function getUrlAttribute(){
+		return url('projects/'.$this->slug);
+	}
+
+	public function getTeamAttribute(){
 		$team = [];
 		$teamleader = User::find($this->user_id);
 		if($teamleader){

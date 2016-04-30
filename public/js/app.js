@@ -1,4 +1,18 @@
 jQuery(document).ready(function($j){
+	var windowWidth = window.innerWidth;
+	var windowHeight = window.innerHeight;
+	function init(){
+		windowWidth = window.innerWidth;
+		windowHeight = window.innerHeight;
+		makeSameHeight('.project-card');
+	}
+	$(window).load(function(){
+		init();
+	})
+	$(window).resize(function () {
+		init();
+    });
+	
 	//ajaxcall function with return data
 	function ajaxCallback(f, u, c, t) {
 		t = typeof t !== 'undefined' ? t : 'POST';
@@ -15,6 +29,20 @@ jQuery(document).ready(function($j){
             });
         }
     }
+
+	function makeSameHeight(c,force){
+		$(c).attr('style','');
+		if (windowWidth > 960 || force == true ){
+			h = 0;
+			$.each($(c),function(){
+				if (h < $(this).height()){
+					h = $(this).height();
+				}
+			});
+			$(c).height(h);
+		}
+	}
+	
 
 	function initStartEnd() {
         $('#start').datetimepicker({

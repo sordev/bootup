@@ -24,6 +24,7 @@ class CreateContentTable extends Migration
 			$table->enum('status', array('draft', 'publish'))->index();
 			$table->boolean('comments')->index();
 			$table->boolean('featured')->index();
+			$table->boolean('showinfo')->index();
 			$table->timestamps();
 			$table->softDeletes();
 			$table->integer('user_id');

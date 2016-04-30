@@ -21,9 +21,9 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::post('user/search/list', 'UserController@searchUserList');
 	//User Projects
 	Route::get('user/projects', 'ProjectController@projects');
-	Route::get('user/profile/{userid?}/projects', 'ProjectController@projects');
 	//Projects
 	Route::get('projects', 'ProjectController@projects');
+	Route::get('project/category/{category?}', 'ProjectController@projects');
 	//Project
 	Route::get('projects/{slug?}', 'ProjectController@project');
 	
@@ -55,18 +55,27 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::post('project/upload/image', function(){
 		$options['upload_url'] = url('/images/project/');
 		$options['upload_dir'] = public_path().'/images/project/';
+		$options['image_versions']['large'] = ['max_width'=>'1366','max_height'=>'768','crop'=>true];
+		$options['image_versions']['thumbnail'] = ['max_width'=>'80','max_height'=>'80','crop'=>true];
+		$options['image_versions']['medium'] = ['max_width'=>'420','max_height'=>'325','crop'=>true];
 		$upload_handler = new App\Http\Controllers\UploadController($options);
 	});
 
 	Route::post('project/upload/reward', function(){
 		$options['upload_url'] = url('/images/reward/');
 		$options['upload_dir'] = public_path().'/images/reward/';
+		$options['image_versions']['large'] = ['max_width'=>'360','max_height'=>'360','crop'=>true];
+		$options['image_versions']['thumbnail'] = ['max_width'=>'80','max_height'=>'80','crop'=>true];
+		$options['image_versions']['medium'] = ['max_width'=>'160','max_height'=>'160','crop'=>true];
 		$upload_handler = new App\Http\Controllers\UploadController($options);
 	});
 
 	Route::post('user/upload/avatar', function(){
 		$options['upload_url'] = url('/images/avatar/');
 		$options['upload_dir'] = public_path().'/images/avatar/';
+		$options['image_versions']['large'] = ['max_width'=>'360','max_height'=>'360','crop'=>true];
+		$options['image_versions']['thumbnail'] = ['max_width'=>'80','max_height'=>'80','crop'=>true];
+		$options['image_versions']['medium'] = ['max_width'=>'160','max_height'=>'160','crop'=>true];
 		$upload_handler = new App\Http\Controllers\UploadController($options);
 	});
 

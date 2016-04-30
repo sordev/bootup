@@ -1,5 +1,6 @@
 @extends('layouts.default')
 @section('header')
+	@parent
 	<p>Төслийн мэдээллээ засварлах.</p>
 @endsection
 

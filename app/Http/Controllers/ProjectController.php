@@ -25,7 +25,7 @@ class ProjectController extends Controller {
 		return $projects;
 	}
 
-	public function projects(Request $request,$userid=null){
+	public function projects(Request $request,$category=null){
 		$this->layout = 'project.list';
 		$this->metas['title'] = "Төслүүд";
 		$edit = false;
@@ -38,6 +38,18 @@ class ProjectController extends Controller {
 		if($request->is('projects')){
 			$projects->where('status',1);
 		}
+		
+		$featured = $projects->where('featured',1);
+
+		if($category!=null){
+			$categoryObject = Category::where('slug',$category)->first();
+			if($categoryObject){
+				$projects->where('category_ids',$categoryObject->id);
+				$featured->where('category_ids',$categoryObject->id);
+			}
+		}
+
+		$featured = $featured->get()->take(3);
 
 		// User's own list
 		if($request->is('user/projects') && $this->user){
@@ -47,19 +59,13 @@ class ProjectController extends Controller {
 			
 		}
 
-		// User's list for public
-		if($request->is('user/profile/*/projects')){
-			$user = User::getUserbyid($userid);
-			$this->metas['title'] = $user->firstname." ".$user->lastname." -н Төслүүд";
-			$projects->where('status',1);
-		}
+		$projects = $projects->paginate(6);
 
-		$projects = $projects->paginate(8);
-		
 		$this->view = $this->BuildLayout();
 		$this->view
 			->withEdit($edit)
 			->withProjects($projects)
+			->withFeatured($featured)
 			;
 		return $this->view;
 	}

@@ -1,5 +1,5 @@
 <?php namespace App\Http\Controllers;
-
+// Hello 
 use Illuminate\Http\Request;
 //use validator, hash, auth
 use Validator;

@@ -122,6 +122,8 @@ class ProjectController extends Controller {
 			;
 		return $this->view;
 	}
+
+	
   
 	public function postNext(Request $request){
 		$return =[];
@@ -174,18 +176,24 @@ class ProjectController extends Controller {
 					$return['status'] = false;
 					$return['errors'] = $v->errors();
 				} else {
-					$project = Project::find($request->get('id'));
-					//Check if project is user's own
-					if($this->user->id == $project->user_id){
-						$project->image = $request->get('image');
-						$project->intro = $request->get('intro');
-						$project->video = $request->get('intro');
-						$project->detail = $request->get('detail');
-						$project->team_members = $request->get('team_members');
-						$project->save();
+					$video = $request->get('video');
+					$parsed = $this->parseVideoUrl($video);
+					if($parsed['status'] == true){
+						$project = Project::find($request->get('id'));
+						//Check if project is user's own
+						if($this->user->id == $project->user_id){
+							$project->image = $request->get('image');
+							$project->intro = $request->get('intro');
+							$project->video = $request->get('video');
+							$project->detail = $request->get('detail');
+							$project->team_members = $request->get('team_members');
+							$project->save();
+						}
+						$return['status'] = true;
+						$return['message'] = 'Таны төсөл амжилттай шинэчилэгдлээ';
+					} else {
+						$return = $parsed;
 					}
-					$return['status'] = true;
-					$return['message'] = 'Таны төсөл амжилттай шинэчилэгдлээ';
 				}
 			break;
 		}
@@ -193,15 +201,6 @@ class ProjectController extends Controller {
 		return $return;
 	}
 
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @return Response
-   */
-  public function store()
-  {
-    
-  }
 
   /**
    * Display the specified resource.
@@ -228,10 +227,12 @@ class ProjectController extends Controller {
 				$edit = true;
 			}
 		}
+		$video = $this->parseVideoUrl($project->video);
 		$this->view = $this->BuildLayout();
 		return $this->view
 			->withStatus($status)
 			->withEdit($edit)
+			->withVideo($video)
 			->withProject($project)
 		;
 	}
@@ -271,28 +272,6 @@ class ProjectController extends Controller {
 			->withProject($project)
 		;
 	}
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function update($id)
-  {
-    
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function destroy($id)
-  {
-    
-  }
 
 	public function addGoalModal(){
 		$addGoalModal = view('modules.modal', ['id'=>'addgoalmodal','title' => 'Төслийн зорилт нэмэх','modalbody'=>'modules.project.goal_add'])

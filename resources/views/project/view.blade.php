@@ -7,7 +7,13 @@
 			<h1>{{{$project->title}}}</h1>
 			<div class="row">
 				<div class="col-md-8">
-					<iframe src="{{{$project->video}}}"></iframe>
+					@if(isset($video))
+						<div class="videoWrapper">
+							@if($video['type']=='youtube')
+								<iframe width="560" height="315" src="https://www.youtube.com/embed/{{{$video['id']}}}" frameborder="0" allowfullscreen></iframe>
+							@endif
+						</div>
+					@endif
 				</div>
 				<div class="col-md-4">
 					<div class="padding-lg">

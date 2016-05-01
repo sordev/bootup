@@ -51,5 +51,5 @@
 			<i class="glyphicon glyphicon-remove"></i>
 		</span>
 	@endif
-	{{Form::hidden($id) }}
+	{{Form::hidden($id,$old) }}
 </div>

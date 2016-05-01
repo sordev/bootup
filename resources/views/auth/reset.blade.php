@@ -5,6 +5,7 @@
 @endsection
 
 @section('header')
+	@parent
 	<p>
 		Enter you email address below, you'll receive password reset link.
 	</p>

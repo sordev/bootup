@@ -23,6 +23,9 @@
 		@foreach($styles as $style)
 		{!! HTML::style(URL::asset('/css/'.$style)) !!}
 		@endforeach
+	@else
+		<link media="all" type="text/css" rel="stylesheet" href="http://bootup.local/css/app.css">
+		<link media="all" type="text/css" rel="stylesheet" href="http://bootup.local/css/main.css">
 	@endif
 
 	@if(isset($scripts['header']))

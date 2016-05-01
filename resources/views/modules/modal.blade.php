@@ -7,7 +7,11 @@
         <h4 class="modal-title" id="{{{$id}}}ModalLabel">{{{$title}}}</h4>
       </div>
       <div class="modal-body">
-        @include($modalbody)
+		@if(isset($vars) && !empty($vars))
+			@include($modalbody,$vars)
+		@else
+			@include($modalbody)
+		@endif
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Хаах</button>

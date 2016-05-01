@@ -3,3 +3,5 @@
 Homestead.yaml
 Homestead.json
 .env
+public/libraries/bower_components/jquery/
+public/images/projects/

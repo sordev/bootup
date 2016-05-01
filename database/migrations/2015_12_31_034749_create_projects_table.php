@@ -19,6 +19,7 @@ class CreateProjectsTable extends Migration {
 			$table->text('intro');
 			$table->text('detail');
 			$table->string('video');
+			$table->boolean('featured');
 			$table->tinyInteger('status');
 			$table->string('slug', 255);
 		});

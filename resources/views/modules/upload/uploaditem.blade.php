@@ -1,11 +1,16 @@
+@if (!isset($old) && empty($old))
+	<?php
+		$old = old($id);
+	?>
+@endif
 <div class="form-group">
 	{{Form::label($id,$label) }}
 	@if($view=='create')
 		<span class="btn btn-success fileinput-button">
 			<i class="glyphicon glyphicon-plus"></i>
-			<span>Select file...</span>
+			<span>Файлаа сонгох...</span>
 			<!-- The file input field used as target for the file upload widget -->
-			<input class="file_upload_input" id="upload_{{{$id}}}" type="file" name="files[]" multiple>
+			<input class="file_upload_input" id="upload_{{{$id}}}" type="file" name="files[]" multiple value="{{{$old}}}">
 		</span>
 		<br>
 		<br>
@@ -14,7 +19,26 @@
 			<div class="progress-bar progress-bar-success"></div>
 		</div>
 		<!-- The container for the uploaded files -->
-		<div id="files_{{{$id}}}" class="files"></div>
+		<div id="files_{{{$id}}}" class="files">
+			@if($old)
+				<h4>Одооны зураг</h4>
+				<img src="{{{asset('images/'.$id.'/thumbnail/'.$old)}}}" data-toggle="modal" data-target="#{{{$id}}}ImageModal">
+
+				<!-- Modal -->
+				<div class="modal fade" id="{{{$id}}}ImageModal" tabindex="-1" role="dialog" aria-labelledby="{{{$id}}}ImageModalLabel">
+				  <div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+					  <div class="modal-body">
+						<img class="thumbnail" style="max-width:100%" src="{{{asset('images/'.$id.'/'.$old)}}}">
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Хаах</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			@endif
+		</div>
 	@elseif ($view=='edit')
 		@if($event->$id)
 			@include('events.imagepreview',['field'=>$id,'img'=>$event->$id])

@@ -1,3 +1,5 @@
+<div class="padding">
+</div>
 <div class="footer-wide">
 	<div class="container">
 		<footer>

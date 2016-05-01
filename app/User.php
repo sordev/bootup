@@ -8,7 +8,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Model implements AuthenticatableContract{
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract{
 
 	use Authenticatable, CanResetPassword;
 	
@@ -44,6 +44,10 @@ class User extends Model implements AuthenticatableContract{
 	public function payments(){
 		return $this->hasMany('App\Payment','user_id');
 	}
+	
+	public function getUrlAttribute(){
+		return url('user/profile/'.$this->username);
+	}
 
 	public function getTotalPaymentsAttribute(){
 		$payments = $this->payments;
@@ -75,7 +79,7 @@ class User extends Model implements AuthenticatableContract{
 	public function usersocial(){
 		return $this->hasMany('App\UserSocial','id','user_id');
 	}
-	
+
 	public function isAdmin(){
 		if($this->role == 1){
 			return true;

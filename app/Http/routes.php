@@ -1,8 +1,10 @@
 <?php
+App::setLocale('mn');
 //Starting 5.2 web middleware has to be included
 Route::group(['middleware' => ['web','striptags']], function () {
 	//Home Route
 	Route::get('/', 'HomeController@index');
+	Route::get('/home', 'HomeController@index');
 
 	
 
@@ -12,10 +14,15 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::get('user/logout', 'UserController@logout');
 	Route::post('user/store', 'UserController@store');
 	Route::get('user/profile/{id?}', 'UserController@profile');
+	Route::post('user/contact/modal', 'UserController@contactUserModal');
+	Route::post('user/contact', 'UserController@contactUser');
 	
 	//Forgot Password
 	Route::get('user/reset/password', 'Auth\PasswordController@getEmail');
 	Route::post('user/reset/password', 'Auth\PasswordController@postEmail');
+	// Password reset routes...
+	Route::get('password/reset/{token}', 'Auth\PasswordController@getReset');
+	Route::post('password/reset', 'Auth\PasswordController@postReset');
 	
 	Route::post('user/search/modal', 'UserController@searchUserModal');
 	Route::post('user/search/list', 'UserController@searchUserList');

@@ -6,6 +6,8 @@ use Validator;
 use Hash;
 use Auth;
 use File;
+use Mail;
+use Image;
 
 //use base controller
 use App\Http\Controllers\Controller;
@@ -70,8 +72,11 @@ class UserController extends Controller {
    */
 	public function store(Request $request){
 		$v = Validator::make($request->all(), [
+			'username' => 'required|unique:users|alpha_num',
 			'email' => 'required|unique:users|email',
+			'emailConfirmation' => 'required|same:email',
 			'password' => 'required',
+			'passwordConfirmation' => 'required|same:password',
 			'tos' => 'required',
 		]);
 		
@@ -83,26 +88,39 @@ class UserController extends Controller {
 			if ($resp->isSuccess()==false){
 				$v->errors()->add('g-recaptcha', 'Би машин биш гэсэн чагтыг тэмдэглэнэ үү');
 			}
-			return redirect('/user/register')->back()->withErrors($v->errors())->withInput($request->except('password'));
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+			//return redirect('/user/register')->back()->withErrors($v->errors())->withInput($request->except('password'));
+		} else {
+			$user = new User;
+			$user->email = $request->input('email');
+			$user->password = Hash::make($request->input('password'));
+			$user->register_ip = $_SERVER['REMOTE_ADDR'];
+			$user->registered_with = 'local';
+			$user->public = 0;
+			$user->status = 1;
+			$user->role = 2;
+			$user->save();
+			$this->sendThankYouEmail($user);
+			Auth::login($user,true);
+			$return['status'] = true;
+			$return['url'] = url('/user/profile/'.$user->usr_id);
+			
 		}
-		
-		$user = new User;
-		$user->email = $request->input('email');
-		$user->password = Hash::make($request->input('password'));
-		$user->register_ip = $_SERVER['REMOTE_ADDR'];
-		$user->registered_with = 'local';
-		$user->public = 0;
-		$user->status = 1;
-		$user->role = 2;
-		$user->save();
-		
-		Auth::login($user,true);
-		return redirect('/user/profile/'.$user->usr_id);
+		return $return;
+	}
+
+	public function sendThankYouEmail($user){
+		Mail::send('email.thankyou', ['user' => $user], function ($m) use ($user) {
+			$m->from('noreply@bootup.mn', 'Бүүтап сайтын автомат хариулагч');
+			$m->to($user->email, $user->fullname)->subject('Бүүтап сайтанд бүртгүүлсэнд баярлалаа!');
+		});
 	}
   
-  public function login(Request $request,$provider=null){
+	public function login(Request $request,$provider=null){
 		$this->layout = 'user.login';
-		$this->metas['title'] = "User Profile";
+		$this->metas['title'] = "Хэрэглэгч нэвтрэх хэсэг";
 		$this->view = $this->BuildLayout();
 		$user = $socialUser = '';
 
@@ -135,7 +153,7 @@ class UserController extends Controller {
 			$firstname = reset($nameArray);
 			$lastname = str_replace($firstname,'',trim($name));
 			$fb_id = $tw_id = $gp_id = $photo_url = $local_photo_url = '';
-			$avatarSavePath = public_path('images/avatars');
+			$avatarSavePath = public_path('images/avatar');
 			switch ($provider) {
 				case 'facebook':
 					$fb_id = $socialUser->id;
@@ -179,16 +197,21 @@ class UserController extends Controller {
 				]);
 				
 				if (!empty($photo_url)){
-					//$img = Image::make($photo_url);
-					// now you are able to resize the instance
-					//$img->resize(320, 240);
-					// and insert a watermark for example
-					//$img->insert('public/watermark.png');
-					// finally we save the image as a new file
-					//$img->save($avatarSavePath.'/'.$user->id.'.jpg');
+					$thumbnail = Image::make($photo_url);
+					$thumbnail->resize(80, 80);
+					$thumbnail->save($avatarSavePath.'/thumbnail/'.$user->id.'.jpg');
 					
-					$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
-					file_put_contents($avatarSavePath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
+					$medium = Image::make($photo_url);
+					$medium->resize(160, 160);
+					$medium->save($avatarSavePath.'/medium/'.$user->id.'.jpg');
+					
+					$large = Image::make($photo_url);
+					$large->resize(360, 360);
+					$large->save($avatarSavePath.'/large/'.$user->id.'.jpg');
+					
+					//$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
+					$ext = 'jpg';
+					//file_put_contents($avatarSavePath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
 					$local_photo_url=$user->id.'.'.$ext;
 					$user->avatar = $local_photo_url;
 					$user->save();
@@ -198,6 +221,8 @@ class UserController extends Controller {
 				$usersocial->social = $provider;
 				$usersocial->socialname = $socialUser->id;
 				$user->usersocial()->save($usersocial);
+				
+				$this->sendThankYouEmail($user);
 			}
 			Auth::login($user,true);
 		}
@@ -249,17 +274,6 @@ class UserController extends Controller {
 		Auth::logout(); // log the user out of our application
 		return redirect('/user/login'); // redirect the user to the login screen
 	}
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function show($id)
-  {
-    
-  }
 
 	public function profile($id=null){
 		$this->layout = 'user.profile';
@@ -385,6 +399,51 @@ class UserController extends Controller {
 		;
 		$return['status'] = true;
 		$return['view'] = $searchUserModal;
+		return $return;
+	}
+
+	public function contactUserModal(Request $request){
+		$user_id = $request->get('user_id');
+		$user = User::find($user_id);
+		$contactUserModal = view('modules.modal', ['id'=>'contactusermodal','title' => 'Хэрэглэгчтэй холбогдох','modalbody'=>'modules.user.contact'])
+			->withUser($user)
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $contactUserModal;
+		return $return;
+	}
+
+	public function contactUser(Request $request){
+		$v = Validator::make($request->all(), [
+			'email' => 'required|email',
+			'fullname' => 'required',
+			'message' => 'required|min:20|max:1000',
+		]);
+		
+		if ($v->fails()){
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+		} else {
+			$from = $request->get('email');
+			$fullname = $request->get('fullname');
+			$mailmessage = $request->get('message');
+			$user_id = $request->get('id');
+			$user = User::find($user_id);
+			if($user){
+				Mail::send('email.contactuser', ['user' => $user,'mailmessage'=>$mailmessage,'fullname'=>$fullname], function ($m) use ($user,$from,$fullname) {
+					$m->from($from, $fullname);
+					$m->to($user->email, $user->fullname)->subject('Бүүтап-р дамжуулан таньтай холбогдож байна!');
+				});
+				$return['status'] = true;
+				$return['view'] = 'Таны захиа илгээгдлээ';
+			} else {
+				$return['status'] = false;
+				$return['errors'] = ['Хэрэглэгч олдсонгүй'];
+			}
+		}
+		
 		return $return;
 	}
 

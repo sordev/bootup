@@ -17,7 +17,7 @@ class Categories extends Seeder
 			['title'=>'Вэбсайт','slug'=>'website','type'=>1],
 			['title'=>'Аппликэшн','slug'=>'application','type'=>1],
 			['title'=>'Видео тоглоом','slug'=>'veideogame','type'=>1],
-			['title'=>'Программ хангам','slug'=>'software','type'=>1],
+			['title'=>'Программ хангамж','slug'=>'software','type'=>1],
 		]);
     }
 }

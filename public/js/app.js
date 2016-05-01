@@ -12,7 +12,7 @@ jQuery(document).ready(function($j){
 	$(window).resize(function () {
 		init();
     });
-	
+
 	//ajaxcall function with return data
 	function ajaxCallback(f, u, c, t) {
 		t = typeof t !== 'undefined' ? t : 'POST';
@@ -42,7 +42,6 @@ jQuery(document).ready(function($j){
 			$(c).height(h);
 		}
 	}
-	
 
 	function initStartEnd() {
         $('#start').datetimepicker({
@@ -72,6 +71,15 @@ jQuery(document).ready(function($j){
 				//$(this).submit();
 			}
 		})
+		$(document).on('click','input[type="submit"]',function(e){
+			f = $(this).closest('form')
+			v = validateRequired(f);
+			if (v==false){
+				e.preventDefault();
+			} else {
+				//$(this).submit();
+			}
+		});
 		$(document).on('keyup','.required',function(){
 			f = $(this).closest('form')
 			v = validateRequired(f);
@@ -100,13 +108,12 @@ jQuery(document).ready(function($j){
 				}
 			}
 		});
-		console.log(e)
 		if ($.isEmptyObject(e)){
 			r = true;
+			showError();
 		} else {
-			showError(e);
+			showError(e,f);
 		}
-		
 		return r;
 	}
 	//validateRequired();
@@ -126,16 +133,25 @@ jQuery(document).ready(function($j){
 	function preventFormSubmission(){
 		f = $('form.preventSubmit');
 		$.each(f,function(i,v){
+			console.log($(v));
+			$(document).on('submit',$(v),function(e){
+				e.preventDefault();
+			});
+		});
+		/*
+		$.each(f,function(i,v){
 			$.each($(v).find('button, .btn'),function(ii,vv){
 				aa = $(vv).data('action');
 				if(typeof aa !== 'undefined'){
-					$(document).on('submit',$(vv),function(e){
+					$(document).on('submit',$(v),function(e){
 						e.preventDefault();
+						console.log(aa);
 						//buttonActions(aa);
 					});
 				}
 			});
 		});
+		*/
 	}
 	preventFormSubmission();
 
@@ -147,7 +163,6 @@ jQuery(document).ready(function($j){
 			a = btn.data('action');
 			f = btn.closest('form');
 			if(typeof a !== 'undefined'){
-				console.log('asdadasdasdas');
 				showError();
 				e.preventDefault();
 				formData = f.serialize();
@@ -195,7 +210,7 @@ jQuery(document).ready(function($j){
 					case 'searchUser':
 						ajaxCallback(formData, '/user/search/list', function (d) {
 							if(d.status == false){
-								showError(d.errors);
+								showError(d.errors,f);
 							} else {
 								$('.userlistmodal').html(d.view);
 							}
@@ -218,10 +233,10 @@ jQuery(document).ready(function($j){
 					case 'addGoal':
 						ajaxCallback(formData+'&project_id='+projectid, '/project/add/goal', function (d) {
 							if(d.status == false){
-								showError(d.errors);
+								showError(d.errors,f);
 							} else {
 								$('.projectgoalslist>ul').append(d.view);
-								$('#addgoalmodal').modal( 'hide' ).data( 'bs.modal', null );
+								$('#addgoalmodal').modal( 'hide' ).remove();
 							}
 						});
 					break;
@@ -230,7 +245,7 @@ jQuery(document).ready(function($j){
 						li = btn.closest('li');
 						ajaxCallback(formData+'&project_id='+projectid+'&goalid='+goalid, '/project/remove/goal', function (d) {
 							if(d.status == false){
-								showError(d.errors);
+								showError(d.errors,f);
 							} else {
 								li.remove();
 							}
@@ -257,10 +272,10 @@ jQuery(document).ready(function($j){
 					case 'addReward':
 						ajaxCallback(formData+'&project_id='+projectid, '/project/add/reward', function (d) {
 							if(d.status == false){
-								showError(d.errors);
+								showError(d.errors,f);
 							} else {
 								$('.projectrewardslist>ul').append(d.view);
-								$('#addrewardmodal').modal( 'hide' ).data( 'bs.modal', null );
+								$('#addrewardmodal').modal( 'hide' ).remove();
 							}
 						});
 					break;
@@ -269,9 +284,46 @@ jQuery(document).ready(function($j){
 						li = btn.closest('li');
 						ajaxCallback(formData+'&project_id='+projectid+'&rewardid='+rewardid, '/project/remove/reward', function (d) {
 							if(d.status == false){
-								showError(d.errors);
+								showError(d.errors,f);
 							} else {
 								li.remove();
+							}
+						});
+					break;
+					case 'contactUserModal':
+						userid = btn.data('userid');
+						ajaxCallback(formData+'&user_id='+userid, '/user/contact/modal', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								if($('#contactusermodal').length > 0){
+									$('#contactusermodal').modal( 'hide' ).remove();
+								}
+								$('body').append(d.view);
+								validateRequired(f)
+								preventFormSubmission();
+								$('#contactusermodal').modal('show');
+								
+							}
+						});
+					break;
+					case 'contactUser':
+						f.addClass('loading');
+						ajaxCallback(formData, '/user/contact', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+								f.removeClass('loading');
+							} else {
+								$('#contactusermodal').find('.modal-body').html(d.view);
+							}
+						});
+					break;
+					case 'register':
+						ajaxCallback(formData, '/user/store', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								window.location.replace(d.url);
 							}
 						});
 					break;
@@ -282,15 +334,18 @@ jQuery(document).ready(function($j){
 	buttonActions();
 
 	//show error function, errors should be 'element':['errorText']
-	function showError(errors){
+	function showError(errors,f){
 		//clean errors first
-		$('.form-group').removeClass('has-error has-feedback');
-		$('.help-block.with-errors').remove();
-		//console.log(errors);
+		$.each($('.form-group'),function(i,v){
+			if($(v).hasClass('has-error')){
+				$(v).removeClass('has-error has-feedback');
+				$(v).find('.help-block.with-errors').remove();
+			}
+		});
 		//show errors
 		if(typeof errors !== 'undefined'){
 			$.each(errors,function(i,v){
-				formgroup = $('#'+i).closest('.form-group');
+				formgroup = f.find('#'+i).closest('.form-group');
 				errorblock = $('<div class="help-block with-errors"><ul class="list-unstyled"></ul></div>');
 				$.each(v,function(vi,vv){
 					errorblock.append('<li>'+vv+'</li>');
@@ -314,7 +369,7 @@ jQuery(document).ready(function($j){
 				case 'addproject':
 					ajaxCallback(formData, '/project/postnext', function (d) {
 						if(d.status == false){
-							showError(d.errors);
+							showError(d.errors,f);
 						} else {
 							stepcontainer.html(d.view);
 							imageUpload('image');
@@ -324,7 +379,7 @@ jQuery(document).ready(function($j){
 				case 'addprojectdetail':
 					ajaxCallback(formData, '/project/postnext', function (d) {
 						if(d.status == false){
-							showError(d.errors);
+							showError(d.errors,f);
 						} else {
 							stepcontainer.html(d.view);
 							imageUpload('image');
@@ -351,8 +406,7 @@ jQuery(document).ready(function($j){
 					data.abort();
 				});
 			delete data.form;
-			console.log(data);
-			/**/data.submit().always(function () {
+			data.submit().always(function () {
 				$this.remove();
 			});
 		});
@@ -422,7 +476,6 @@ jQuery(document).ready(function($j){
 				);
 			}).on('fileuploaddone', function (e, data) {
 				//disables multiupload
-				console.log(data);
 				$('#'+id).off('click');
 				$.each(data.result.files, function (index, file) {
 					$('#'+id).val(file.name);

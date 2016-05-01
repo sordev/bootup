@@ -7,7 +7,7 @@
 
 @section('content')
 	@include('errors.errors')
-	@include('modules.user.register')
+	@include('modules.user.login')
 	<h3>Би нууц үгээ мартжээ:</h3>
-	<p>Санаа бүү зов <a href="{!!url('password/email')!!}">энд дараад</a> шинэ нууц үг үүсгэж болно.
+	<p>Санаа бүү зов <a href="{!!url('user/reset/password')!!}">энд дараад</a> шинэ нууц үг үүсгэж болно.
 @endsection

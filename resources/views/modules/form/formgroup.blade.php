@@ -15,12 +15,15 @@ if (isset($required) && ($required==true || $required == 'required')){
 ?>
 
 <div class="form-group">
-	{!! Form::label($id,$label) !!}
+	@if(isset($showlabel) && $showlabel == false)
+	@else
+		{!! Form::label($id,$label) !!}
+	@endif
 	
 		@if ($type=='email')
 			{!! Form::email($id,$old,['class'=>'form-control '.$required,'placeholder'=>$label]) !!}
 		@elseif ($type=='password')
-			{!! Form::password('password',['class'=>'form-control '.$required,'placeholder'=>$label]) !!}
+			{!! Form::password($id,['class'=>'form-control '.$required,'placeholder'=>$label]) !!}
 		@elseif ($type=='number')
 			{!! Form::number($id,$old,['class'=>'form-control '.$required,'placeholder'=>$label]) !!}
 		@elseif ($type=='text')
@@ -33,8 +36,8 @@ if (isset($required) && ($required==true || $required == 'required')){
 		@elseif ($type=='checkbox')
 		<div class="checkbox">
 			<label>
-			{!! Form::checkbox($id,$old,false,['class'=>' '.$required,'placeholder'=>$label]) !!}
-				{{{$label}}}
+			{!! Form::checkbox($id,$old,false,['class'=>' '.$required,'placeholder'=>$label,'id'=>$id]) !!}
+				{!!$label!!}
 			</label>
 		</div>
 		@elseif ($type=='date')

@@ -34,6 +34,11 @@ class Project extends Model {
 		return $this->hasMany('App\Payment', 'project_id');
 	}
 
+	public function leader()
+	{
+		return $this->belongsTo('App\User', 'user_id');
+	}
+
 	public function getCategoriesAttribute()
     {
 		$catIdArray = explode(',',$this->category_ids);
@@ -89,13 +94,17 @@ class Project extends Model {
 		return url('projects/'.$this->slug);
 	}
 
+	public function getSharesAttribute(){
+		$sharelinks = [
+			['href'=>'http://www.facebook.com/sharer.php?u='.$this->url.'&t='.$this->title,'class'=>'fb'],
+			['href'=>'https://twitter.com/share?url='.$this->url.'&text='.$this->title,'class'=>'tw']
+		];
+		return $sharelinks;
+	}
+
 	public function getTeamAttribute(){
 		$team = [];
-		$teamleader = User::find($this->user_id);
-		if($teamleader){
-			$teamleader->leader = true;
-			$team[] = $teamleader;
-		}
+		//$team[] = $this->leader;
 		if(!empty($this->team_members)){
 			$teamMembersArray = explode(',',$this->team_members);
 			foreach ($teamMembersArray as $tid){

@@ -19,6 +19,14 @@ $factory->define(App\Project::class, function (Faker\Generator $faker) {
 	}
 	array_unique($teamArray);
 	$team_members = implode(',',$teamArray);
+	
+	$videoArray =[
+		'https://www.youtube.com/watch?v=O22xhjJxWws',
+		'https://www.youtube.com/watch?v=h8575UD8sNY',
+		'https://www.youtube.com/watch?v=q2NU8y93SyA',
+	];
+	$key = array_rand($videoArray);
+	$video = $videoArray[$key];
 
     return [
         'title' => $faker->text(30),
@@ -30,6 +38,7 @@ $factory->define(App\Project::class, function (Faker\Generator $faker) {
 		'slug' => $faker->word(),
 		'featured' => rand(0,1),
 		'image' => rand(1,3).'.jpg',
+		'video' => $video,
 		'team_members' => $team_members,
     ];
 });
@@ -74,7 +83,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 	$key = array_rand($strings);
 	$avatar = $strings[$key];
     return [
-        'username' => $faker->word(),
+        'username' => $faker->word().$faker->word(),
 		'email'=> $faker->safeEmail(),
 		'password'=> bcrypt('123'),
 		'public' => rand(0,1),
@@ -92,7 +101,7 @@ $factory->define(App\Content::class, function (Faker\Generator $faker) {
 		'category_id' => 2,
 		'type'=> 2,
 		'title' => $faker->text(30),
-		'slug' => $faker->word(),
+		'slug' => $faker->word().'-'.$faker->word(),
 		'content' => $faker->text(),
 		'status' => 'publish',
 		'user_id' => 1,

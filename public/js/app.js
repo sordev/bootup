@@ -327,6 +327,19 @@ jQuery(document).ready(function($j){
 							}
 						});
 					break;
+					case 'share':
+						window.open(this.href, "ShareWindow", "width=400, height=300");
+						return false;
+					break;
+					case 'claimReward':
+						ajaxCallback(formData, '/project/claim/rewardmodal', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								window.location.replace(d.url);
+							}
+						});
+					break;
 				}
 			}
 		});

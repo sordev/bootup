@@ -6,8 +6,6 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::get('/', 'HomeController@index');
 	Route::get('/home', 'HomeController@index');
 
-	
-
 	//User Route
 	Route::match(['get', 'post'], '/user/login/{provider?}', 'UserController@login');
 	Route::get('user/register', 'UserController@create');
@@ -34,6 +32,9 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	//Project
 	Route::get('projects/{slug?}', 'ProjectController@project');
 	
+	Route::post('project/claim/rewardModal', 'ProjectController@claimRewardModal');
+	Route::post('project/claim/reward', 'ProjectController@claimReward');
+	
 	//Edit routes
 	Route::group(['middleware' => ['auth']], function () {
 		Route::get('project/add', 'ProjectController@add');
@@ -48,7 +49,6 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		Route::post('project/add/rewardmodal', 'ProjectController@addRewardModal');
 		Route::post('project/add/reward', 'ProjectController@addReward');
 		Route::post('project/remove/reward', 'ProjectController@removeReward');
-		
 		//User profile edits
 		Route::get('user/edit/profile', 'UserController@edit');
 		Route::post('user/update/profile', 'UserController@update');
@@ -56,9 +56,7 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		Route::get('user/edit/profile/password', 'UserController@editPassword');
 		Route::post('user/update/profile/password', 'UserController@updatePassword');
 	});
-	
-	
-	
+
 	Route::post('project/upload/image', function(){
 		$options['upload_url'] = url('/images/project/');
 		$options['upload_dir'] = public_path().'/images/project/';
@@ -103,6 +101,6 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		Route::post('content/update', 'ContentController@update');
 		Route::get('content/{type?}', 'ContentController@index');
 	});
-	
+
 	Route::get('{slug?}', 'ContentController@item');
 });

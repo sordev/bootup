@@ -1,6 +1,6 @@
 <li data-rewardid="{{{$r->id}}}">
 	@if($r->image)
-		<img src="{{{asset('/images/rewards/thumbnail/'.$r->image)}}}" class="img-thumbnail"/>
+		<img src="{{{asset('/images/reward/thumbnail/'.$r->image)}}}" class="img-thumbnail"/>
 	@endif
 	<h4>{{{$r->title}}}</h4>
 	<p>{{{$r->description}}}</p>

@@ -11,8 +11,9 @@ class CreatePaymentsTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->integer('project_id')->unsigned();
+			$table->integer('reward_id')->unsigned()->nullable();
+			$table->integer('user_id')->unsigned()->nullable();
 			$table->decimal('value', 10,2);
-			$table->string('user_id');
 			$table->string('gateway');
 		});
 	}

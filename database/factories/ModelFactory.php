@@ -69,6 +69,7 @@ $factory->define(App\Payment::class, function (Faker\Generator $faker) {
         'project_id' => rand(1,20),
 		'value'=> $faker->randomNumber(),
 		'user_id' => rand(1,20),
+		'reward_id' => rand(1,200),
     ];
 });
 

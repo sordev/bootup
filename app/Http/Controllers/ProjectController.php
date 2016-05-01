@@ -56,7 +56,7 @@ class ProjectController extends Controller {
 			$this->metas['title'] = "Миний Төслүүд";
 			$projects->where('user_id',$this->user->id);
 			$edit = true;
-			
+			$featured = false;
 		}
 
 		$projects = $projects->paginate(6);
@@ -357,6 +357,24 @@ class ProjectController extends Controller {
 	}
 
 	public function addRewardModal(){
+		$addRewardModal = view('modules.modal', ['id'=>'addrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_add'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $addRewardModal;
+		return $return;
+	}
+
+	public function claimRewardModal(){
+		$addRewardModal = view('modules.modal', ['id'=>'claimrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_claim'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $addRewardModal;
+		return $return;
+	}
+
+	public function claimReward(){
 		$addRewardModal = view('modules.modal', ['id'=>'addrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_add'])
 			->render()
 		;

@@ -1,7 +1,7 @@
 <div class="col-md-4">
 	<div class="project-card white-box">
 		@if(isset($edit) && $edit == true)
-			<a href="{{{url('project/edit/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
+			<a href="{{{url('project/edit/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Засах</a> 
 		@endif
 		<a href="{{{url('projects/'.$p->slug)}}}" title="{{{$p->title}}}"><img class="project-card-image" src="{{{asset('images/project/medium/'.$p->image)}}}"></a>
 		<div class="project-card-description padding-sm">

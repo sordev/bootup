@@ -34,7 +34,7 @@
 		</div>
 		
 		<h3>Төслийн ерөнхий зураг</h3>
-		@include('modules.upload.uploaditem',['id'=>'image','label'=>'Төслийн толгой зураг','view'=>'create','old'=>$project->image])
+		@include('modules.upload.uploaditem',['id'=>'image','label'=>'Төслийн толгой зураг','view'=>'create','old'=>$project->image,'type'=>'project'])
 		@include('modules.form.formgroup',['data'=>$project,'type'=>'text','label'=>'Видео','id'=>'video','required'=>'required','note'=>'Youtube болон Vimeo дэмжинэ.'])
 		@include('modules.form.formgroup',['data'=>$project,'type'=>'text','label'=>'Төслийн товч','id'=>'intro','required'=>'required'])
 		@include('modules.form.formgroup',['data'=>$project,'type'=>'textarea','label'=>'Төслийн дэлгэрэнгүй танилцуулга','id'=>'detail','required'=>'required','cke'=>true])

@@ -22,14 +22,23 @@
 		<div id="files_{{{$id}}}" class="files">
 			@if($old)
 				<h4>Одооны зураг</h4>
-				<img src="{{{asset('images/'.$id.'/thumbnail/'.$old)}}}" data-toggle="modal" data-target="#{{{$id}}}ImageModal">
+				@if(isset($type))
+					<img src="{{{asset('images/'.$type.'/thumbnail/'.$old)}}}" data-toggle="modal" data-target="#{{{$id}}}ImageModal">
+				@else
+					<img src="{{{asset('images/'.$id.'/thumbnail/'.$old)}}}" data-toggle="modal" data-target="#{{{$id}}}ImageModal">
+				@endif
 
 				<!-- Modal -->
 				<div class="modal fade" id="{{{$id}}}ImageModal" tabindex="-1" role="dialog" aria-labelledby="{{{$id}}}ImageModalLabel">
 				  <div class="modal-dialog modal-lg" role="document">
 					<div class="modal-content">
 					  <div class="modal-body">
-						<img class="thumbnail" style="max-width:100%" src="{{{asset('images/'.$id.'/'.$old)}}}">
+						@if(isset($type))
+							<img class="thumbnail" style="max-width:100%" src="{{{asset('images/'.$type.'/'.$old)}}}">
+						@else
+							<img class="thumbnail" style="max-width:100%" src="{{{asset('images/'.$id.'/'.$old)}}}">
+						@endif
+						
 					  </div>
 					  <div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Хаах</button>

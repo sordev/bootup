@@ -2,7 +2,13 @@
 @section('header')
 	@parent
 	@if($content->showinfo == 1)
-		Бичсэн {{{$content->author->firstname}}} {{{$content->author->lastname}}} | Огноо {{{$content->updated_at->format('Y/m/d')}}}
+		{{trans('blog.author')}} {{{$content->author->firstname}}} {{{$content->author->lastname}}} | {{trans('messages.date')}} {{{$content->updated_at->format('Y/m/d')}}}
+		<div>
+		Түгээх
+		@foreach($content->shares as $s)
+			<a href="{{{$s['href']}}}" data-action="share" data-href="{{{$s['href']}}}" class="btn btn-default btn-share btn-{{{$s['class']}}}">{{{$s['class']}}}</a>
+		@endforeach
+		</div>
 		<hr>
 	@endif
 @endsection

@@ -34,6 +34,24 @@ class ProjectController extends Controller {
 		return $this->view;
 	}
 
+	public function projectsSearch(Request $request){
+		$this->layout = 'project.list';
+		$this->metas['title'] = 'Төслүүд | "'.$request->get('searchtext').'" Хайлтын үр дүн ';
+		// General list
+		$projects = Project::orderBy('id','DESC')
+			->where('status',1)
+			->where('title','LIKE','%'.$request->get('searchtext').'%')
+			->paginate(6)
+			->appends($request->except('page'))
+		;
+		$this->view = $this->BuildLayout();
+		$this->view
+			->withProjects($projects)
+			->withCategory(false)
+			;
+		return $this->view;
+	}
+
 	public function userProjects(Request $request,$category=null){
 		$this->layout = 'project.table';
 		$this->metas['title'] = "Миний Төслүүд";
@@ -44,6 +62,21 @@ class ProjectController extends Controller {
 		;
 		$this->view = $this->BuildLayout();
 		$this->view
+			->withProjects($projects)
+			;
+		return $this->view;
+	}
+
+	public function adminProjects(Request $request,$category=null){
+		$this->layout = 'project.table';
+		$this->metas['title'] = "Бүх Төслүүд";
+		// General list
+		$projects = Project::orderBy('id','DESC')
+			->paginate(10)
+		;
+		$this->view = $this->BuildLayout();
+		$this->view
+			->withUser($this->user)
 			->withProjects($projects)
 			;
 		return $this->view;
@@ -264,6 +297,36 @@ class ProjectController extends Controller {
 		return redirect()->back()->withErrors(['error'=>trans('project.deleted')]);
 	}
 
+	public function enable($id=null){
+		$project = Project::find($id);
+		if($this->user->role == 1){
+			$project->status = 1;
+			$project->save();
+			return redirect()->back()->withErrors(['error'=>trans('project.updated')]);
+		} 
+		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
+	}
+
+	public function disable($id=null){
+		$project = Project::find($id);
+		if($this->user->role == 1){
+			$project->status = 0;
+			$project->save();
+			return redirect()->back()->withErrors(['error'=>trans('project.updated')]);
+		} 
+		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
+	}
+
+	public function lock($id=null){
+		$project = Project::find($id);
+		if($this->user->role == 1){
+			$project->status = 2;
+			$project->save();
+			return redirect()->back()->withErrors(['error'=>trans('project.updated')]);
+		} 
+		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
+	}
+
 	public function addGoalModal(){
 		$addGoalModal = view('modules.modal', ['id'=>'addgoalmodal','title' => 'Төслийн зорилт нэмэх','modalbody'=>'modules.project.goal_add'])
 			->render()
@@ -459,7 +522,7 @@ class ProjectController extends Controller {
 	public function supporterListModal(Request $request){
 		$projectid = $request->get('projectid');
 		$project = Project::find($projectid);
-		if($this->user->id == $project->user_id){
+		if($this->user->id == $project->user_id || $this->user->role == 1){
 			$supporterListModal = view('modules.modal', ['id'=>'supporterlistmodal'.$project->id,'title' => 'Таны '.$project->title.' төслийн дэмжигчид ','modalbody'=>'modules.project.supporter_list','size'=>'lg'])
 				->withProject($project)
 				->render()

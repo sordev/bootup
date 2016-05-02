@@ -14,6 +14,7 @@ class CategoryTypes extends Seeder
         DB::table('category_types')->insert([
 			['title'=>'Төсөл','slug'=>'project'],
 			['title'=>'Агуулга','slug'=>'content'],
+			['title'=>'Блог','slug'=>'blog'],
 		]);
     }
 }

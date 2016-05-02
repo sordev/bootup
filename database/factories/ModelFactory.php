@@ -100,7 +100,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Content::class, function (Faker\Generator $faker) {
     return [
-		'category_id' => 2,
+		'category_id' => rand(6,15),
 		'type'=> 2,
 		'title' => $faker->text(30),
 		'slug' => $faker->word().'-'.$faker->word(),
@@ -108,5 +108,13 @@ $factory->define(App\Content::class, function (Faker\Generator $faker) {
 		'status' => 'publish',
 		'user_id' => 1,
 		'showinfo' => rand(0,1),
+    ];
+});
+
+$factory->define(App\Category::class, function (Faker\Generator $faker) {
+    return [
+		'title' => $faker->text(30),
+		'type'=> 3,
+		'slug' => $faker->word().'-'.$faker->word(),
     ];
 });

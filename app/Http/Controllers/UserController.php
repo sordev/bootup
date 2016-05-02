@@ -84,7 +84,7 @@ class UserController extends Controller {
 		//recaptcha implementation 
 		$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
 		$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-		
+		//dd($resp);
 		if ($v->fails() || $resp->isSuccess()==false){
 			if ($resp->isSuccess()==false){
 				$v->errors()->add('g-recaptcha', 'Би машин биш гэсэн чагтыг тэмдэглэнэ үү');

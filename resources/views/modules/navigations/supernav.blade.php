@@ -18,11 +18,11 @@
 			@include('modules.navigations.item',['item'=>$n])
 		@endforeach
 	  </ul>
-	  {!! Form::open(array('url'=>'project/search','method'=>'post','class'=>'navbar-form navbar-right')) !!}
+	  {!! Form::open(array('url'=>'project/search','method'=>'get','class'=>'navbar-form navbar-right')) !!}
 		<div class="form-group">
-			{!! Form::text('searchtext',old('searchtext'),['class'=>'form-control','placeholder'=>'Төслийн нэр']) !!}
+			{!! Form::text('searchtext',old('searchtext'),['class'=>'form-control','placeholder'=>trans('project.name')]) !!}
 		</div>
-		<button type="submit" class="btn btn-default">Хайх</button>
+		<button type="submit" class="btn btn-default">{{{trans('messages.search')}}}</button>
 	  {!! Form::close() !!}
 	  @if(isset($navigations['user']))
 	  <ul class="nav navbar-nav navbar-right">

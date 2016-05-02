@@ -31,17 +31,47 @@ class ContentController extends Controller
 		}
 	}
 
-	public function getContents($request){
+	public function blog(Request $request,$category_slug=null){
+		$this->layout = 'content.blog';
+		$this->metas['title'] = trans('blog.blog');
+		$this->view = $this->BuildLayout();
+		$categories = Category::where('type',3)->get();
+		return $this->view
+			->withBlogs($this->getContents($request,2,$category_slug))
+			->withCategories($categories);
+	}
+
+	public function blogItem($category_slug,$slug){
+		$category = Category::where('slug',$category_slug)->first();
+		$content = Content::where('slug',$slug)->where('category_id',$category->id)->first();
+		if ($content){
+			$this->layout = 'content.item';
+			$this->metas['title'] = $content->title;
+			$this->view = $this->BuildLayout();
+			return $this->view->withContent($content);
+		} else {
+			abort('404');
+		}
+	}
+
+	public function getContents($request,$type=null,$category_slug=null){
 		$contents = Content::orderBy('created_at','desc')->where('status','publish');
 		
 		if($request->has('title')){
 			$contents->where('title','like','%'.$request->get('title').'%');
 		}
 		if($request->has('category_id')){
-			$contents->where('title',$request->get('category_id'));
+			$contents->where('category_id',$request->get('category_id'));
 		}
 		if($request->has('type')){
-			$contents->where('title',$request->get('type'));
+			$contents->where('type',$request->get('type'));
+		}
+		if($type!=null){
+			$contents->where('type',$type);
+		}
+		if($category_slug!=null){
+			$category = Category::where('slug',$category_slug)->first();
+			$contents->where('category_id',$category->id);
 		}
 		if($request->has('status')){
 			$status = $request->get('status');
@@ -52,10 +82,6 @@ class ContentController extends Controller
 			}
 		}
 		$contents = $contents->paginate(15)->appends($request->except('page'));
-		foreach($contents as $content){
-			$content->category = Category::find($content->category_id)->title;
-			$content->typetitle = ContentType::find($content->type)->title;
-		}
 		
 		return $contents;
 	}

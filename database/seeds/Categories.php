@@ -13,11 +13,12 @@ class Categories extends Seeder
     {
 		DB::table('categories')->insert([
 			['title'=>'Хуудсууд','slug'=>'pages','type'=>2],
-			['title'=>'Блог','slug'=>'blog','type'=>2],
 			['title'=>'Вэбсайт','slug'=>'website','type'=>1],
 			['title'=>'Аппликэшн','slug'=>'application','type'=>1],
 			['title'=>'Видео тоглоом','slug'=>'veideogame','type'=>1],
 			['title'=>'Программ хангамж','slug'=>'software','type'=>1],
 		]);
+		
+		factory(App\Category::class, 10)->create();
     }
 }

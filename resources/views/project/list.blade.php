@@ -1,5 +1,8 @@
 @extends('layouts.default')
 @section('header')
+	@if(isset($category) and $category == false)
+		@parent
+	@else
 	</div>
 		<div class="gray-box padding-lg">
 			<div class="container text-center">
@@ -13,10 +16,11 @@
 		</div>
 	<div class="container">
 	@overwrite
+	@endif
 
 @section('content')
 	@include('errors.errors')
-	@if($featured)
+	@if(isset($featured) && $featured)
 		<section>
 			<div class="padding">
 			</div>

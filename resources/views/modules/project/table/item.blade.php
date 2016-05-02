@@ -15,6 +15,14 @@
 	</td>
 	<td class="text-center">
 		{{{$p->statustext}}}
+		@if(isset($user) && $user->role == 1)
+			<br>
+			<a href="{{{url('project/enable/'.$p->id)}}}"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> {{{trans('messages.enable')}}}</a>
+			<br>
+			<a href="{{{url('project/disable/'.$p->id)}}}"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> {{{trans('messages.disable')}}}</a> 
+			<br>
+			<a href="{{{url('project/lock/'.$p->id)}}}"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> {{{trans('messages.lock')}}}</a> 
+		@endif
 	</td>
 	<td class="text-center">
 		@if(!empty($p->image))

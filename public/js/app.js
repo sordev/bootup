@@ -322,6 +322,7 @@ jQuery(document).ready(function($j){
 					case 'register':
 						ajaxCallback(formData, '/user/store', function (d) {
 							if(d.status == false){
+								grecaptcha.reset();
 								showError(d.errors,f);
 							} else {
 								window.location.replace(d.url);

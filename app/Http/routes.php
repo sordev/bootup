@@ -4,7 +4,11 @@ App::setLocale('mn');
 Route::group(['middleware' => ['web','striptags']], function () {
 	//Home Route
 	Route::get('/', 'HomeController@index');
-	Route::get('/home', 'HomeController@index');
+	Route::get('home', 'HomeController@index');
+	Route::get('blog', 'ContentController@blog');
+	Route::get('blog/category/{category_slug}', 'ContentController@blog');
+	Route::get('blog/search', 'ContentController@blog');
+	Route::get('blog/{category_slug}/{slug}', 'ContentController@blogItem');
 
 	//User Route
 	Route::match(['get', 'post'], '/user/login/{provider?}', 'UserController@login');
@@ -27,6 +31,7 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	//Projects
 	Route::get('projects', 'ProjectController@projects');
 	Route::get('project/category/{category?}', 'ProjectController@projects');
+	Route::get('project/search', 'ProjectController@projectsSearch');
 	//Project
 	Route::get('projects/{slug?}', 'ProjectController@project');
 	
@@ -41,6 +46,9 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		Route::get('project/edit/{id?}', 'ProjectController@edit');
 		Route::post('project/update', 'ProjectController@update');
 		Route::get('project/delete/{id?}', 'ProjectController@delete');
+		Route::get('project/enable/{id?}', 'ProjectController@enable');
+		Route::get('project/disable/{id?}', 'ProjectController@disable');
+		Route::get('project/lock/{id?}', 'ProjectController@lock');
 		Route::post('project/postnext', 'ProjectController@postNext');
 		//Goal
 		Route::post('project/add/goalmodal', 'ProjectController@addGoalModal');
@@ -89,6 +97,8 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	});
 
 	Route::group(['prefix' => 'admin','middleware' => ['auth', 'admin','except'=>'striptags']], function () {
+		// Projects
+		Route::get('projects', 'ProjectController@adminProjects');
 		// Categories
 		Route::get('categories/create', 'CategoryController@create');
 		Route::get('categories/edit/{id?}', 'CategoryController@create');

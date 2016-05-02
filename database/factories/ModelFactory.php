@@ -71,6 +71,7 @@ $factory->define(App\Payment::class, function (Faker\Generator $faker) {
 		'user_id' => rand(1,20),
 		'status' => rand(0,1),
 		'reward_id' => rand(1,200),
+		'note' => $faker->text(30),
     ];
 });
 

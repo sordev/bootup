@@ -29,5 +29,6 @@ return [
 	'destroy' => 'Устгах',
 	'restore' => 'Сэргээх',
 	'search' => 'Хайх',
+	'anonymous' => 'Нууцлаг',
 	
 ];

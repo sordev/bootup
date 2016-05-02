@@ -24,6 +24,30 @@
 							<b>{{{count($project->payment)}}}</b>
 							<br>
 							Дэмжигчид
+								@foreach($project->payment as $payment)
+									<div class="media">
+										@if($payment->user->avatar && $payment->user->public == 1)
+										<div class="media-left">
+											<a href="{{$payment->user->url}}">
+												<img class="media-object" src="{{asset('images/avatar/thumbnail/'.$payment->user->avatar)}}" />
+											</a>
+										</div>
+										@endif
+										<div class="media-body">
+										<h4 class="media-heading">
+											@if($payment->user->public == 1)
+												{{{$payment->user->fullname}}}
+											@else
+												{{trans('messages.anonymous')}}
+											@endif
+										</h4>
+										{{{$payment->valuetext}}}
+											@if($payment->note)
+												<p class="note">{{$payment->note}}</p>
+											@endif
+										</div>
+									</div>
+								@endforeach
 						</div>
 						<div>
 							<b>{{{number_format($project->totalpayment)}}} ₮</b>

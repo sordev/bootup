@@ -90,6 +90,7 @@ jQuery(document).ready(function($j){
 		});
 	}
 	validate();
+
 	function validateRequired(f){
 		var r = false;
 		var e = {};
@@ -135,7 +136,9 @@ jQuery(document).ready(function($j){
 		$.each(f,function(i,v){
 			console.log($(v));
 			$(document).on('submit',$(v),function(e){
-				e.preventDefault();
+				if(f.hasClass('.preventSubmit')){
+					e.preventDefault();
+				}
 			});
 		});
 		/*
@@ -157,7 +160,6 @@ jQuery(document).ready(function($j){
 
 	//action buttons
 	function buttonActions(){
-		
 		$(document).on('click','button, .btn',function(e){
 			btn = $(this);
 			a = btn.data('action');
@@ -236,7 +238,7 @@ jQuery(document).ready(function($j){
 								showError(d.errors,f);
 							} else {
 								$('.projectgoalslist>ul').append(d.view);
-								$('#addgoalmodal').modal( 'hide' ).remove();
+								$('#addgoalmodal').modal( 'hide' );
 							}
 						});
 					break;
@@ -275,7 +277,7 @@ jQuery(document).ready(function($j){
 								showError(d.errors,f);
 							} else {
 								$('.projectrewardslist>ul').append(d.view);
-								$('#addrewardmodal').modal( 'hide' ).remove();
+								$('#addrewardmodal').modal( 'hide' );
 							}
 						});
 					break;
@@ -296,25 +298,24 @@ jQuery(document).ready(function($j){
 							if(d.status == false){
 								showError(d.errors,f);
 							} else {
-								if($('#contactusermodal').length > 0){
-									$('#contactusermodal').modal( 'hide' ).remove();
+								if($('#contactusermodal'+userid).length == 0){
+									$('body').append(d.view);
 								}
-								$('body').append(d.view);
 								validateRequired(f)
 								preventFormSubmission();
-								$('#contactusermodal').modal('show');
-								
+								$('#contactusermodal'+userid).modal('show');
 							}
 						});
 					break;
 					case 'contactUser':
 						f.addClass('loading');
+						f.find('#id')=id;
 						ajaxCallback(formData, '/user/contact', function (d) {
 							if(d.status == false){
 								showError(d.errors,f);
 								f.removeClass('loading');
 							} else {
-								$('#contactusermodal').find('.modal-body').html(d.view);
+								$('#contactusermodal'+id).find('.modal-body').html(d.view);
 							}
 						});
 					break;
@@ -332,11 +333,30 @@ jQuery(document).ready(function($j){
 						return false;
 					break;
 					case 'claimReward':
-						ajaxCallback(formData, '/project/claim/rewardmodal', function (d) {
+						rewardid = btn.data('rewardid');
+						ajaxCallback(formData+'&rewardid='+rewardid, '/project/claim/rewardmodal', function (d) {
 							if(d.status == false){
 								showError(d.errors,f);
 							} else {
-								window.location.replace(d.url);
+								if($('#claimrewardmodal'+rewardid).length == 0){
+									$('body').append(d.view);
+								}
+								validateRequired(f)
+								preventFormSubmission();
+								$('#claimrewardmodal'+rewardid).modal('show');
+							}
+						});
+					break;
+					case 'supporterListModal':
+						projectid = btn.data('projectid');
+						ajaxCallback(formData+'&projectid='+projectid, '/project/supporter/listmodal', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								if($('#supporterlistmodal'+projectid).length == 0){
+									$('body').append(d.view);
+								}
+								$('#supporterlistmodal'+projectid).modal('show');
 							}
 						});
 					break;
@@ -384,21 +404,25 @@ jQuery(document).ready(function($j){
 						if(d.status == false){
 							showError(d.errors,f);
 						} else {
-							stepcontainer.html(d.view);
-							imageUpload('image');
+							window.location.replace(d.url);
+							//stepcontainer.html(d.view);
+							//imageUpload('image');
 						}
 					});
 				break
+				// ajax CKE editor data transferring wasn't working so abandoned this
+				/**/
 				case 'addprojectdetail':
 					ajaxCallback(formData, '/project/postnext', function (d) {
 						if(d.status == false){
 							showError(d.errors,f);
 						} else {
-							stepcontainer.html(d.view);
-							imageUpload('image');
+							console.log('asdasdsa');
+							f.submit();
 						}
 					});
 				break
+				
 			}
 		});
 	}
@@ -407,13 +431,13 @@ jQuery(document).ready(function($j){
 	uploadButton = $('<div/>')
 		.addClass('btn btn-primary')
 		.prop('disabled', true)
-		.text('Processing...')
+		.text('Ачааллаж байна...')
 		.on('click', function () {
 			var $this = $(this),
 				data = $this.data();
 			$this
 				.off('click')
-				.text('Abort')
+				.text('Цуцлах')
 				.on('click', function () {
 					$this.remove();
 					data.abort();
@@ -478,7 +502,7 @@ jQuery(document).ready(function($j){
 				}
 				if (index + 1 === data.files.length) {
 					data.context.find('div.btn')
-						.text('Upload')
+						.text('Хуулах')
 						.prop('disabled', !!data.files.error);
 				}
 			}).on('fileuploadprogressall', function (e, data) {
@@ -508,7 +532,7 @@ jQuery(document).ready(function($j){
 				});
 			}).on('fileuploadfail', function (e, data) {
 				$.each(data.files, function (index) {
-					var error = $('<span class="text-danger"/>').text('File upload failed.');
+					var error = $('<span class="text-danger"/>').text('Файл хуулж чадсангүй.');
 					$(data.context.children()[index])
 						.append('<br>')
 						.append(error);

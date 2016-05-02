@@ -13,9 +13,16 @@ class Projects extends Seeder
     {
 		factory(App\Project::class, 20)->create()
 		->each(function($u) {
-			for ($i=0;$i<10;$i++){
+			$max = rand(5,10);
+			for ($i=0;$i<$max;$i++){
 				$u->goal()->save(factory(App\Goal::class)->make());
+			}
+			$max = rand(5,10);
+			for ($i=0;$i<$max;$i++){
 				$u->reward()->save(factory(App\Reward::class)->make());
+			}
+			$max = rand(5,10);
+			for ($i=0;$i<$max;$i++){
 				$u->payment()->save(factory(App\Payment::class)->make());
 			}
 		});

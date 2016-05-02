@@ -15,6 +15,7 @@ class CreatePaymentsTable extends Migration {
 			$table->integer('user_id')->unsigned()->nullable();
 			$table->decimal('value', 10,2);
 			$table->string('gateway');
+			$table->tinyInteger('status');
 		});
 	}
 

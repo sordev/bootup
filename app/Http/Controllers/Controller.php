@@ -152,6 +152,7 @@ abstract class Controller extends BaseController
 				['title'=>'Миний төслүүд','url'=>url('user/projects')],
 				['title'=>'Дэмжсэн төслүүд','url'=>url('user/support')],
 				['title'=>'Бүртгэлийн тохиргоо','url'=>url('user/edit/profile')],
+				['title'=>'Нууц үг солих','url'=>url('user/edit/profile/password')],
 			];
 			
 			$navigations['user'] = [

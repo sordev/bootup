@@ -69,6 +69,7 @@ $factory->define(App\Payment::class, function (Faker\Generator $faker) {
         'project_id' => rand(1,20),
 		'value'=> $faker->randomNumber(),
 		'user_id' => rand(1,20),
+		'status' => rand(0,1),
 		'reward_id' => rand(1,200),
     ];
 });
@@ -86,7 +87,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'username' => $faker->word().$faker->word(),
 		'email'=> $faker->safeEmail(),
-		'password'=> bcrypt('123'),
+		'password'=> bcrypt('12345'),
 		'public' => rand(0,1),
 		'status' => 1,
 		'role' => 2,

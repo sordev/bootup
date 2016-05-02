@@ -10,7 +10,7 @@
 			@endif
 			<div class="row">
 				<div class="col-md-8">
-					@if(isset($video))
+					@if(isset($video) && !empty($video) && $video['status']==true)
 						<div class="videoWrapper">
 							@if($video['type']=='youtube')
 								<iframe width="560" height="315" src="https://www.youtube.com/embed/{{{$video['id']}}}" frameborder="0" allowfullscreen></iframe>
@@ -90,7 +90,9 @@
 		  <div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="description">
 				<h2>Төслийн тухай</h2>
+				@if($project->image)
 				<img src="{{{asset('images/project/large/'.$project->image)}}}"/>
+				@endif
 				<h3>Зардлын задаргаа</h3>
 					<table class="table">
 						<thead>

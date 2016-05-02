@@ -24,22 +24,23 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	
 	Route::post('user/search/modal', 'UserController@searchUserModal');
 	Route::post('user/search/list', 'UserController@searchUserList');
-	//User Projects
-	Route::get('user/projects', 'ProjectController@projects');
 	//Projects
 	Route::get('projects', 'ProjectController@projects');
 	Route::get('project/category/{category?}', 'ProjectController@projects');
 	//Project
 	Route::get('projects/{slug?}', 'ProjectController@project');
 	
-	Route::post('project/claim/rewardModal', 'ProjectController@claimRewardModal');
+	Route::post('project/claim/rewardmodal', 'ProjectController@claimRewardModal');
 	Route::post('project/claim/reward', 'ProjectController@claimReward');
 	
 	//Edit routes
 	Route::group(['middleware' => ['auth']], function () {
+		//User Projects
+		Route::get('user/projects', 'ProjectController@userProjects');
 		Route::get('project/add', 'ProjectController@add');
 		Route::get('project/edit/{id?}', 'ProjectController@edit');
-		
+		Route::post('project/update', 'ProjectController@update');
+		Route::get('project/delete/{id?}', 'ProjectController@delete');
 		Route::post('project/postnext', 'ProjectController@postNext');
 		//Goal
 		Route::post('project/add/goalmodal', 'ProjectController@addGoalModal');
@@ -51,10 +52,13 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		Route::post('project/remove/reward', 'ProjectController@removeReward');
 		//User profile edits
 		Route::get('user/edit/profile', 'UserController@edit');
-		Route::post('user/update/profile', 'UserController@update');
-		
 		Route::get('user/edit/profile/password', 'UserController@editPassword');
 		Route::post('user/update/profile/password', 'UserController@updatePassword');
+		Route::post('user/update/profile', 'UserController@update');
+		//Payments
+		Route::post('project/supporter/listmodal','ProjectController@supporterListModal');
+		Route::get('user/support','UserController@support');
+		
 	});
 
 	Route::post('project/upload/image', function(){

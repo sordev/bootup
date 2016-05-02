@@ -54,7 +54,7 @@
 		@endif()
 		<span class="btn btn-success fileinput-button" data-toggle="modal" data-target="#modal_{{{$id}}}">
 			<i class="glyphicon glyphicon-edit"></i>
-			<span>Change</span>
+			<span>Солих</span>
 		</span>
 		<span class="btn btn-danger empty-field" data-field="{{{$id}}}">
 			<i class="glyphicon glyphicon-remove"></i>

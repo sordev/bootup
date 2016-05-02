@@ -51,13 +51,17 @@ class Project extends Model {
 
 	public function getDaysLeftAttribute()
     {
-		$firstGoal = $this->goal()->orderBy('start')->first()->start;
-		$start = new \Carbon\Carbon($firstGoal);
-		$now = \Carbon\Carbon::now();
 		$daysleft = 0;
-		if($start->diff($now)->days >= 1){
-			$daysleft = $start->diff($now)->days;
+		if($this->goal()->orderBy('start')->first()){
+			$firstGoal = $this->goal()->orderBy('start')->first()->start;
+			$start = new \Carbon\Carbon($firstGoal);
+			$now = \Carbon\Carbon::now();
+			
+			if($start->diff($now)->days >= 1){
+				$daysleft = $start->diff($now)->days;
+			}
 		}
+		
 		return $daysleft;
     }
 
@@ -68,6 +72,22 @@ class Project extends Model {
 			$total = $total+($g->goal);
 		}
 		return $total;
+	}
+	
+	public function getStatusTextAttribute(){
+		$text = '';
+		switch($this->status){
+			case 0:
+				$text = trans('messages.inactive');
+			break;
+			case 1:
+				$text = trans('messages.active');
+			break;
+			case 2:
+				$text = trans('messages.locked');
+			break;
+		}
+		return $text;
 	}
 
 	public function getPercentageAttribute(){
@@ -82,16 +102,23 @@ class Project extends Model {
 	}
 
 	public function getTotalPaymentAttribute(){
-		$payments = $this->payment;
 		$total = 0;
-		foreach ($payments as $p){
+		foreach ($this->completedpayment as $p){
 			$total = $total+($p->value);
 		}
 		return $total;
 	}
 
+	public function getCompletedPaymentAttribute(){
+		return $this->payment()->where('status',1)->get();
+	}
+
 	public function getUrlAttribute(){
 		return url('projects/'.$this->slug);
+	}
+
+	public function getEditUrlAttribute(){
+		return url('project/edit/'.$this->id);
 	}
 
 	public function getSharesAttribute(){
@@ -104,7 +131,9 @@ class Project extends Model {
 
 	public function getTeamAttribute(){
 		$team = [];
-		//$team[] = $this->leader;
+		$this->leader->leader = true;
+		$team[] = $this->leader;
+		
 		if(!empty($this->team_members)){
 			$teamMembersArray = explode(',',$this->team_members);
 			foreach ($teamMembersArray as $tid){

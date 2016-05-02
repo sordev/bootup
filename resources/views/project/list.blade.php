@@ -1,24 +1,18 @@
 @extends('layouts.default')
 @section('header')
-@if(isset($edit) and $edit == true)
-	
-@else
 	</div>
-	<div class="gray-box padding-lg">
-		<div class="container text-center">
-			<h1>Төслүүдийн ангилалалууд.</h1>
-			@if(isset($navigations['categories']))
-				@foreach($navigations['categories'] as $n)
-					<a class="btn btn-default btn-lg" href="{{{$n['url']}}}" title="{{{$n['title']}}}">{{{$n['title']}}}</a>
-				@endforeach
-			@endif
+		<div class="gray-box padding-lg">
+			<div class="container text-center">
+				<h1>Төслүүдийн ангилалалууд.</h1>
+				@if(isset($navigations['categories']))
+					@foreach($navigations['categories'] as $n)
+						<a class="btn btn-default btn-lg" href="{{{$n['url']}}}" title="{{{$n['title']}}}">{{{$n['title']}}}</a>
+					@endforeach
+				@endif
+			</div>
 		</div>
-	</div>
 	<div class="container">
 	@overwrite
-@endif
-
-
 
 @section('content')
 	@include('errors.errors')

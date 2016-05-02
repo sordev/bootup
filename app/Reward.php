@@ -16,4 +16,7 @@ class Reward extends Model {
 		return (int)$amount-count($sold);
 	}
 
+	public function project(){
+		return $this->belongsTo('App\Project','project_id');
+	}
 }

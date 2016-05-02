@@ -1,44 +1,16 @@
 @extends('layouts.default')
 
-@section('sidebar')
-    @parent
-@endsection
-
 @section('header')
 	@parent
-	<p>
-		Нууц үгээ солих.
-	</p>
 @endsection
 
 @section('content')
 
-@if($errors->any())
-	@include('errors.errors')
-@endif
-@if (session('status'))
-    <div class="ui message success">
-        {{ session('status') }}
-    </div>
-@endif
-{!! Form::open(array('url'=>'user/update/profile/password','method'=>'post','class'=>'ui form editpasswordform')) !!}  
-<div class="three fields">
-	<div class="required field">
-		{!! Form::label('password_old','Old Password') !!}
-		{!! Form::password('password_old','',['required']) !!}
-	</div>
-	<div class="required field">
-		{!! Form::label('password_new','New Password') !!}
-		{!! Form::password('password_new','',['required']) !!}
-	</div>
-	<div class="required field">
-		{!! Form::label('password_new_confirmation','New Password Repeat') !!}
-		{!! Form::password('password_new_confirmation','',['required']) !!}
-	</div>
-</div>
-<div class="ui error message">
-	<div class="header">We noticed some issues</div>
-</div>
-{!! Form::submit('Update',['class'=>'ui submit button blue']) !!}
+@include('errors.errors')
+{!! Form::open(array('url'=>'user/update/profile/password','method'=>'post','class'=>'')) !!}
+@include('modules.form.formgroup',['type'=>'password','label'=>trans('user.oldpassword'),'id'=>'password_old',$required='required'])
+@include('modules.form.formgroup',['type'=>'password','label'=>trans('user.newpassword'),'id'=>'password_new',$required='required'])
+@include('modules.form.formgroup',['type'=>'password','label'=>trans('user.newpasswordrepeat'),'id'=>'password_new_confirmation',$required='required'])
+{!! Form::submit(trans('messages.update'),['class'=>'btn btn-default']) !!}
 {!! Form::close() !!}
 @endsection

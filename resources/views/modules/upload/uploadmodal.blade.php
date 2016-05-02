@@ -4,7 +4,7 @@
 	  <div class="modal-body">
 		<span class="btn btn-success fileinput-button">
 			<i class="glyphicon glyphicon-plus"></i>
-			<span>Select files...</span>
+			<span>Файлаа сонгох...</span>
 			<!-- The file input field used as target for the file upload widget -->
 			<input class="file_upload_input" id="upload_{{{$field}}}" type="file" name="files[]" multiple>
 		</span>
@@ -18,7 +18,7 @@
 		</div>
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal">Хаах</button>
 	  </div>
 	</div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

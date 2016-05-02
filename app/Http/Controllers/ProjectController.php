@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 use Validator;
 use View;
+use Session;
 use App\Category;
 use App\Project;
 use App\Content;
@@ -10,37 +11,12 @@ use App\Reward;
 use Illuminate\Http\Request;
 class ProjectController extends Controller {
 
-  /**
-   * Display a listing of the resource.
-   *
-   * @return Response
-   */
-
-	public function getProjects(Request $request){
-		$projects = Project::orderBy('id','DESC');
-		if($request->is('user/projects') && $this->user){
-			$projects->where('user_id',$this->user->id);
-		}
-		$projects = $projects->paginate(8);
-		return $projects;
-	}
-
 	public function projects(Request $request,$category=null){
 		$this->layout = 'project.list';
 		$this->metas['title'] = "Төслүүд";
-		$edit = false;
-		//Request::is('user/projects*')
-
 		// General list
-		$projects = Project::orderBy('id','DESC');
-
-		// Public List
-		if($request->is('projects')){
-			$projects->where('status',1);
-		}
-		
+		$projects = Project::orderBy('id','DESC')->where('status',1);
 		$featured = $projects->where('featured',1);
-
 		if($category!=null){
 			$categoryObject = Category::where('slug',$category)->first();
 			if($categoryObject){
@@ -48,40 +24,30 @@ class ProjectController extends Controller {
 				$featured->where('category_ids',$categoryObject->id);
 			}
 		}
-
 		$featured = $featured->get()->take(3);
-
-		// User's own list
-		if($request->is('user/projects') && $this->user){
-			$this->metas['title'] = "Миний Төслүүд";
-			$projects->where('user_id',$this->user->id);
-			$edit = true;
-			$featured = false;
-		}
-
 		$projects = $projects->paginate(6);
-
 		$this->view = $this->BuildLayout();
 		$this->view
-			->withEdit($edit)
 			->withProjects($projects)
 			->withFeatured($featured)
 			;
 		return $this->view;
 	}
 
-	public function index(){
+	public function userProjects(Request $request,$category=null){
+		$this->layout = 'project.table';
+		$this->metas['title'] = "Миний Төслүүд";
+		// General list
+		$projects = Project::orderBy('id','DESC')
+			->where('user_id',$this->user->id)
+			->paginate(10)
+		;
+		$this->view = $this->BuildLayout();
+		$this->view
+			->withProjects($projects)
+			;
+		return $this->view;
 	}
-
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return Response
-   */
-  public function create()
-  {
-    
-  }
 
 	public function appendScriptStyle(){
 		//for upload
@@ -100,6 +66,7 @@ class ProjectController extends Controller {
 		array_push($this->scripts['footer'],'../libraries/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js');
 		array_push($this->styles,'../libraries/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css');
 	}
+
 	public function add(){
 		$this->layout = 'project.add';
 		$this->metas['title'] = "Төсөл нэмэх";
@@ -112,7 +79,7 @@ class ProjectController extends Controller {
 			['id'=>'faq','title'=>'FAQ Асуулт хариулт','content'=>Content::getContent('faq')],
 			['id'=>'requirment','title'=>'Төслийн шалгуур','content'=>Content::getContent('requirment')],
 			['id'=>'funding','title'=>'Хөрөнгө оруулах','content'=>Content::getContent('funding')],
-			['id'=>'tos','title'=>'Үйлчилгээний нөхцөл','content'=>Content::getContent('tos')],
+			['id'=>'tooos','title'=>'Үйлчилгээний нөхцөл','content'=>Content::getContent('tos')],
 		];
 
 		$this->view
@@ -123,8 +90,6 @@ class ProjectController extends Controller {
 		return $this->view;
 	}
 
-	
-  
 	public function postNext(Request $request){
 		$return =[];
 		$return['status'] = false;
@@ -133,7 +98,7 @@ class ProjectController extends Controller {
 			case 'addproject':
 				$rules = [
 					'title' => 'required|unique:projects',
-					'slug' => 'required|unique:projects',
+					'slug' => 'required|unique:projects|alphanum',
 					'category_ids' => 'required',
 				];
 				$v = Validator::make($request->all(), $rules);
@@ -162,38 +127,31 @@ class ProjectController extends Controller {
 					;
 					$return['status'] = true;
 					$return['view'] = $addprojectdetail;
+					$return['url'] = $project->editurl;
 				}
 			break;
+			// ajax CKE editor wasn't working so abandoning this
+			/**/
 			case 'addprojectdetail':
 				$rules = [
-					'image' => 'required',
-					'video' => 'required',
-					'intro' => 'required',
-					'category_ids' => 'detail',
+					//'image' => 'required',
+					//'video' => 'required',
+					//'intro' => 'required',
+					//'category_ids' => 'detail',
 				];
 				$v = Validator::make($request->all(), $rules);
 				if ($v->fails()){
 					$return['status'] = false;
 					$return['errors'] = $v->errors();
 				} else {
-					$video = $request->get('video');
-					$parsed = $this->parseVideoUrl($video);
-					if($parsed['status'] == true){
-						$project = Project::find($request->get('id'));
-						//Check if project is user's own
-						if($this->user->id == $project->user_id){
-							$project->image = $request->get('image');
-							$project->intro = $request->get('intro');
-							$project->video = $request->get('video');
-							$project->detail = $request->get('detail');
-							$project->team_members = $request->get('team_members');
-							$project->save();
+					if($request->has('video')){
+						$video = $request->get('video');
+						$parsed = $this->parseVideoUrl($video);
+						if($parsed['status'] == false){
+							return $parsed;
 						}
-						$return['status'] = true;
-						$return['message'] = 'Таны төсөл амжилттай шинэчилэгдлээ';
-					} else {
-						$return = $parsed;
 					}
+					$return['status'] = true;
 				}
 			break;
 		}
@@ -201,33 +159,28 @@ class ProjectController extends Controller {
 		return $return;
 	}
 
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
 	public function project($slug){
 		$project = Project::where('slug',$slug);
-		$status = null;
+		$status = $video = null;
 		$edit = false;
+		if(!$this->user){
+			$project->where('status',1);
+		}
 		if($project->exists()){
 			$project = $project->first();
 			$this->metas['title'] = $project->title;
 			$this->layout = 'project.view';
+			if($this->user && ($this->user->id == $project->user_id || $this->user->role == 1)){
+				$edit = true;
+			}
+			
+			$video = $this->parseVideoUrl($project->video);
 		} else {
 			$this->metas['title'] = 'Төсөл олдсонгүй';
 			$this->layout = 'errors.404';
-			$status = "Таны хайсан төсөл олдсонгүй";
+			$status = "Таны хайсан төсөл олдсонгүй эсвэл идэвхигүй байна. Та хэрвээ төслийн эзэмшигч бол нэвтэрч ороод үзнэ үү.";
 			$project = null;
 		}
-		if($this->user && $project){
-			if($this->user->id == $project->user_id){
-				$edit = true;
-			}
-		}
-		$video = $this->parseVideoUrl($project->video);
 		$this->view = $this->BuildLayout();
 		return $this->view
 			->withStatus($status)
@@ -237,12 +190,6 @@ class ProjectController extends Controller {
 		;
 	}
 
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
 	public function edit($id){
 		$this->appendScriptStyle();
 		$project = Project::where('id',$id);
@@ -273,6 +220,50 @@ class ProjectController extends Controller {
 		;
 	}
 
+	public function update(Request $request){
+		$rules = [
+			//'image' => 'required',
+			//'video' => 'required',
+			//'intro' => 'required',
+			//'category_ids' => 'detail',
+		];
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			$return['status'] = false;
+			$return['errors'] = $v->errors();
+		} else {
+			$project = Project::find($request->get('id'));
+			//Check if project is user's own
+			if($this->user->id == $project->user_id){
+				$project->image = $request->get('image');
+				$project->intro = $request->get('intro');
+				$project->video = $request->get('video');
+				$project->detail = $request->get('detail');
+				$project->team_members = $request->get('team_members');
+				$project->save();
+			}
+			Session::flash('status', trans('project.updated'));
+			return redirect('project/edit/'.$project->id);
+		}
+		if($return['status'] == false){
+			return $return;
+		}
+		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
+	}
+
+	public function delete($id=null){
+		$project = Project::find($id);
+		if($project->status > 0){
+			return redirect()->back()->withErrors(['error'=>trans('project.cantdelete')]);
+		}
+		if($project->user_id == $this->user->id || $this->user->role == 1){
+			$project->delete();
+		} else {
+			return redirect()->back()->withErrors(['error'=>trans('project.cantdelete')]);
+		}
+		return redirect()->back()->withErrors(['error'=>trans('project.deleted')]);
+	}
+
 	public function addGoalModal(){
 		$addGoalModal = view('modules.modal', ['id'=>'addgoalmodal','title' => 'Төслийн зорилт нэмэх','modalbody'=>'modules.project.goal_add'])
 			->render()
@@ -299,7 +290,7 @@ class ProjectController extends Controller {
 			if($request->has('project_id')){
 				$project_id = $request->get('project_id');
 				$project = Project::find($project_id);
-				if($project && $project->user_id == $this->user->id){
+				if($project && $project->user_id == $this->user->id && $project->status == 0){
 					$goal = new Goal;
 					$goal->title = $request->get('title');
 					$goal->project_id = $request->get('project_id');
@@ -337,7 +328,7 @@ class ProjectController extends Controller {
 		if($request->has('project_id')){
 			$project_id = $request->get('project_id');
 			$project = Project::find($project_id);
-			if($project && $project->user_id == $this->user->id){
+			if($project && $project->user_id == $this->user->id && $project->status == 0){
 				$goalid = $request->get('goalid');
 				$goal = Goal::find($goalid);
 				if ($goal->project_id == $project_id){
@@ -365,24 +356,6 @@ class ProjectController extends Controller {
 		return $return;
 	}
 
-	public function claimRewardModal(){
-		$addRewardModal = view('modules.modal', ['id'=>'claimrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_claim'])
-			->render()
-		;
-		$return['status'] = true;
-		$return['view'] = $addRewardModal;
-		return $return;
-	}
-
-	public function claimReward(){
-		$addRewardModal = view('modules.modal', ['id'=>'addrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_add'])
-			->render()
-		;
-		$return['status'] = true;
-		$return['view'] = $addRewardModal;
-		return $return;
-	}
-
 	public function addReward(Request $request){
 		$rules = [
 			'title' => 'required',
@@ -399,7 +372,7 @@ class ProjectController extends Controller {
 			if($request->has('project_id')){
 				$project_id = $request->get('project_id');
 				$project = Project::find($project_id);
-				if($project && $project->user_id == $this->user->id){
+				if($project && $project->user_id == $this->user->id && $project->status == 0){
 					$reward = new Reward;
 					$reward->title = $request->get('title');
 					$reward->image = $request->get('reward_image');
@@ -430,14 +403,14 @@ class ProjectController extends Controller {
 		}
 		return $return;
 	}
-	
+
 	public function removeReward(Request $request){
 		$return['status'] = false;
 		$return['errors'] = [];
 		if($request->has('project_id')){
 			$project_id = $request->get('project_id');
 			$project = Project::find($project_id);
-			if($project && $project->user_id == $this->user->id){
+			if($project && $project->user_id == $this->user->id && $project->status == 0){
 				$rewardid = $request->get('rewardid');
 				$reward = Reward::find($rewardid);
 				if ($reward->project_id == $project_id){
@@ -453,6 +426,47 @@ class ProjectController extends Controller {
 			$return['status'] = false;
 			$return['errors'] = ['Төслийн АйДи байхгүй байна'];
 		}
+		return $return;
+	}
+
+	public function claimRewardModal(Request $request){
+		$col = 6;
+		if($this->user){
+			$col = 12;
+		}
+		$rewardid = $request->get('rewardid');
+		$reward = Reward::find($rewardid);
+		$claimRewardModal = view('modules.modal', ['id'=>'claimrewardmodal'.$rewardid,'title' => 'Урамшуулал авах','modalbody'=>'modules.project.reward_claim'])
+			->withUser($this->user)
+			->withCol($col)
+			->withReward($reward)
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $claimRewardModal;
+		return $return;
+	}
+
+	public function claimReward(){
+		$addRewardModal = view('modules.modal', ['id'=>'addrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_add'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $addRewardModal;
+		return $return;
+	}
+
+	public function supporterListModal(Request $request){
+		$projectid = $request->get('projectid');
+		$project = Project::find($projectid);
+		if($this->user->id == $project->user_id){
+			$supporterListModal = view('modules.modal', ['id'=>'supporterlistmodal'.$project->id,'title' => 'Таны '.$project->title.' төслийн дэмжигчид ','modalbody'=>'modules.project.supporter_list','size'=>'lg'])
+				->withProject($project)
+				->render()
+				;
+		}
+		$return['status'] = true;
+		$return['view'] = $supporterListModal;
 		return $return;
 	}
 }

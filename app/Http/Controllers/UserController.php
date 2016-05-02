@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Role;
 use App\UserSocial;
+use App\Payment;
 
 //settings model
 use App\Setting;
@@ -405,7 +406,7 @@ class UserController extends Controller {
 	public function contactUserModal(Request $request){
 		$user_id = $request->get('user_id');
 		$user = User::find($user_id);
-		$contactUserModal = view('modules.modal', ['id'=>'contactusermodal','title' => 'Хэрэглэгчтэй холбогдох','modalbody'=>'modules.user.contact'])
+		$contactUserModal = view('modules.modal', ['id'=>'contactusermodal'.$user_id,'title' => $user->fullname.' -д захиа илгээх','modalbody'=>'modules.user.contact'])
 			->withUser($user)
 			->render()
 		;
@@ -488,8 +489,17 @@ class UserController extends Controller {
 				$return['userlist'] = $userlist;
 			}
 		}
-		
 		return $return;
+	}
+
+	public function support(){
+		$this->layout = 'user.support';
+		$this->metas['title'] = "Миний дэмжсэн төслүүд";
+		$this->view = $this->BuildLayout();
+		return $this->view
+			->withUser($this->user)
+			->withPayments($this->user->payments()->paginate(5))
+		;
 	}
 }
 

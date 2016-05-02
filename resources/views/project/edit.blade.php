@@ -5,8 +5,8 @@
 @endsection
 
 @section('content')
-	<div class="well well-lg projectsteps">
 	@include('errors.errors')
+	<div class="well well-lg projectsteps">
 	@include('project.steps.addprojectdetail')
 	</div>
 @endsection

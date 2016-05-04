@@ -34,6 +34,15 @@ class Project extends Model {
 		return $this->hasMany('App\Payment', 'project_id');
 	}
 
+	public function comment(){
+		return $this->hasMany('App\Comment','item_id');
+	}
+
+	public function donation()
+	{
+		return $this->hasMany('App\Payment', 'project_id')->where('reward_id',null);
+	}
+
 	public function leader()
 	{
 		return $this->belongsTo('App\User', 'user_id');
@@ -93,10 +102,12 @@ class Project extends Model {
 	public function getPercentageAttribute(){
 		$totalGoal = $this->totalgoal;
 		$totalPayment = $this->totalpayment;
-		
-		$percentage = $totalPayment*100/$totalGoal;
-		if($percentage > 100){
-			$percentage = 100;
+		$percentage = 0;
+		if($totalGoal && $totalPayment){
+			$percentage = $totalPayment*100/$totalGoal;
+			if($percentage > 100){
+				$percentage = 100;
+			}
 		}
 		return (int)$percentage;
 	}

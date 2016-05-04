@@ -14,6 +14,7 @@ class ContentTypes extends Seeder
         DB::table('content_types')->insert([
 			['title'=>'Хуудас','uniqid'=>'page'],
 			['title'=>'Блог','uniqid'=>'blog'],
+			['title'=>'Төслийн шинэчилэл','uniqid'=>'updates'],
 		]);
     }
 }

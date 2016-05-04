@@ -23,6 +23,7 @@ use App\Setting;
 
 use Response;
 use Socialite;
+use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller {
 	
@@ -117,6 +118,45 @@ class UserController extends Controller {
 			$m->from('noreply@bootup.mn', 'Бүүтап сайтын автомат хариулагч');
 			$m->to($user->email, $user->fullname)->subject('Бүүтап сайтанд бүртгүүлсэнд баярлалаа!');
 		});
+	}
+	
+	public function loginPost(Request $request){
+		//validate input
+		$v = Validator::make($request->all(), [
+			'email' => 'required|email',
+			'password' => 'required'
+		]);
+
+		//recaptcha implementation 
+		//TODO after 5 attempt show recaptcha
+		//$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
+		//$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+		if ($v->fails()){
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+		}
+
+		$userdata = array(
+			'email' => $request->get('email'),
+			'password' => $request->get('password'),
+		);
+
+		$remember = false;
+		if ($request->has('remember_me') && $request->get('remember_me')==1){
+			$remember = true;
+		}
+
+		if (Auth::attempt($userdata,$remember)) {
+			$currentPath= Route::getFacadeRoot()->current()->uri();
+			$return['status'] = true;
+			$return['url'] = url($currentPath);
+		} else {
+			$return['status'] = false;
+			$return['errors'] = ['general'=>['Please check your email and/or password or register']];
+		}
+		return $return;
 	}
   
 	public function login(Request $request,$provider=null){
@@ -233,40 +273,6 @@ class UserController extends Controller {
 			return redirect('/user/profile');
 		}
 		
-		//if doing login
-		if ($request->isMethod('post')){
-			//validate input
-			$v = Validator::make($request->all(), [
-				'email' => 'required|email',
-				'password' => 'required'
-			]);
-			
-			//recaptcha implementation 
-			//TODO after 5 attempt show recaptcha
-			//$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
-			//$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-			
-			if ($v->fails()){
-				return redirect()->back()->withErrors($v->errors());
-			}
-			
-			$userdata = array(
-				'email' => $request->get('email'),
-				'password' => $request->get('password'),
-			);
-			
-			$remember = false;
-			if ($request->has('remember_me') && $request->get('remember_me')==1){
-				$remember = true;
-			}
-			
-			if (Auth::attempt($userdata,$remember)) {
-				return redirect()->intended('defaultpage');
-			} else {
-				// validation not successful, send back to form 
-				return redirect()->back()->withErrors('Please check your email and/or password or register')->withInput();
-			}
-		} 
 		return $this->view;
 	}
 	

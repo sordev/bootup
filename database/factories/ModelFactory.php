@@ -65,12 +65,15 @@ $factory->define(App\Reward::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\Payment::class, function (Faker\Generator $faker) {
+	$values = ['0',$faker->randomNumber()];
+	$key = array_rand($values);
+	$value = $values[$key];
+	
     return [
-        'project_id' => rand(1,20),
-		'value'=> $faker->randomNumber(),
+		'value'=> $value,
 		'user_id' => rand(1,20),
 		'status' => rand(0,1),
-		'reward_id' => rand(1,200),
+		//'reward_id' => factory(App\Reward::class)->create()->id,
 		'note' => $faker->text(30),
     ];
 });
@@ -117,5 +120,20 @@ $factory->define(App\Category::class, function (Faker\Generator $faker) {
 		'title' => $faker->text(30),
 		'type'=> 3,
 		'slug' => $faker->word().'-'.$faker->word(),
+    ];
+});
+
+$factory->define(App\Comment::class, function (Faker\Generator $faker) {
+	$strings = array(
+		null,
+		1,
+	);
+	$key = array_rand($strings);
+	$reply_id = $strings[$key];
+    return [
+		'comment' => $faker->text(),
+		'reply_id' => $reply_id,
+		'user_id' => rand(1,20),
+		'status' => 1,
     ];
 });

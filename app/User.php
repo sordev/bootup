@@ -80,6 +80,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		return $this->hasMany('App\UserSocial','id','user_id');
 	}
 
+	public function comment(){
+		return $this->hasMany('App\Comment','user_id');
+	}
+
 	public function isAdmin(){
 		if($this->role == 1){
 			return true;

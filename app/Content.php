@@ -31,6 +31,10 @@ class Content extends Model
 		return $this->belongsTo('App\ContentType','type');
 	}
 
+	public function comment(){
+		return $this->hasMany('App\Comment','item_id');
+	}
+
 	public function getSummaryAttribute(){
 		if(empty($this->summary)){
 			return str_limit(strip_tags($this->content), 1200);

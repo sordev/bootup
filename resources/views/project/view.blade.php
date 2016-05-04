@@ -21,22 +21,24 @@
 				<div class="col-md-4">
 					<div class="padding-lg">
 						<div>
-							<b>{{{count($project->payment)}}}</b>
-							<br>
-							Дэмжигчид
-								@foreach($project->payment as $payment)
+							<a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseDonation" aria-expanded="false" aria-controls="collapseDonation">
+							  Хандивлагчид <span class="badge">{{count($project->donation)}}</span>
+							</a>
+							<div class="collapse" id="collapseDonation">
+							  <div class="well">
+								@foreach($project->donation as $payment)
 									<div class="media">
 										@if($payment->user->avatar && $payment->user->public == 1)
-										<div class="media-left">
-											<a href="{{$payment->user->url}}">
-												<img class="media-object" src="{{asset('images/avatar/thumbnail/'.$payment->user->avatar)}}" />
-											</a>
-										</div>
+										<a href="{{$payment->user->url}}">
+											<img class="pull-left" src="{{asset('images/avatar/thumbnail/'.$payment->user->avatar)}}" />
+										</a>
 										@endif
 										<div class="media-body">
 										<h4 class="media-heading">
 											@if($payment->user->public == 1)
-												{{{$payment->user->fullname}}}
+												<a href="{{$payment->user->url}}">
+													{{{$payment->user->fullname}}}
+												</a>
 											@else
 												{{trans('messages.anonymous')}}
 											@endif
@@ -48,6 +50,8 @@
 										</div>
 									</div>
 								@endforeach
+							  </div>
+							</div>
 						</div>
 						<div>
 							<b>{{{number_format($project->totalpayment)}}} ₮</b>
@@ -160,9 +164,7 @@
 		  </div>
 	  </div>
 	  <div class="col-md-4">
-			
 			<div class="padding">
-				
 				@foreach($project->reward as $r)
 					<div class="gray-box padding-sm">
 						<h4>{{{$r->title}}}</h4>
@@ -171,14 +173,19 @@
 						@endif
 						<b>Үнэлэмж: {{{number_format($r->value)}}} ₮</b>
 						<br>
-						<b>Нийт: {{{$r->amount}}}</b>
-						<br>
-						<b>Үлдсэн: {{{$r->amountleft}}}</b>
-						<br>
+						@if($r->amountleft > 0)
+							<b>Үлдсэн/Нийт: {{{$r->amountleft}}}/{{{$r->amount}}}</b>
+							<br>
+						@else
+							<b>Дууссан</b>
+							<br>
+						@endif
 						{{{$r->description}}}
-						{!! Form::open(array('url'=>'/','method'=>'post','class'=>'preventSubmit')) !!}
-							{!! Form::submit('Авах',['class'=>'btn btn-default','data-action'=>'claimReward','data-rewardid'=>$r->id]) !!}
-						{!! Form::close()!!}
+						@if($r->amountleft > 0)
+							{!! Form::open(array('url'=>'/','method'=>'post','class'=>'preventSubmit')) !!}
+								{!! Form::submit('Авах',['class'=>'btn btn-default','data-action'=>'claimReward','data-rewardid'=>$r->id]) !!}
+							{!! Form::close()!!}
+						@endif
 					</div>
 					<div class="padding-sm">
 					</div>

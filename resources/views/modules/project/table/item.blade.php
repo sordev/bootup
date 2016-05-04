@@ -62,7 +62,7 @@
 	<td>
 		<a href="{{{url('project/edit/'.$p->id)}}}"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{{trans('messages.edit')}}}</a> 
 		<br>
-		<a href="{{{url('project/delete/'.$p->id)}}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{{trans('messages.delete')}}}</a> 
+		<a href="{{{url('project/delete/'.$p->id)}}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{{trans('messages.delete')}}}</a>
 		<br>
 		{!! Form::open() !!}
 		<a href="{{{url('project/delete/'.$p->id)}}}" class="btn btn-default" data-projectid="{{$p->id}}" data-action="supporterListModal">{{{trans('project.supporters')}}}</a> 

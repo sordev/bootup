@@ -14,13 +14,13 @@ jQuery(document).ready(function($j){
     });
 
 	//ajaxcall function with return data
-	function ajaxCallback(f, u, c, t) {
+	function ajaxCallback(d, u, c, t) {
 		t = typeof t !== 'undefined' ? t : 'POST';
-        if (f) {
+        if (d) {
             $.ajax({
                 type: t,
                 url: u,
-                data: f,
+                data: d,
                 dataType: 'json'
             }).done(function (d, status, xhr) {
                 c(d);
@@ -311,21 +311,35 @@ jQuery(document).ready(function($j){
 						f.addClass('loading');
 						f.find('#id')=id;
 						ajaxCallback(formData, '/user/contact', function (d) {
+							f.removeClass('loading');
 							if(d.status == false){
 								showError(d.errors,f);
-								f.removeClass('loading');
 							} else {
 								$('#contactusermodal'+id).find('.modal-body').html(d.view);
 							}
 						});
 					break;
 					case 'register':
+						f.addClass('loading');
 						ajaxCallback(formData, '/user/store', function (d) {
+							f.removeClass('loading');
 							if(d.status == false){
 								grecaptcha.reset();
 								showError(d.errors,f);
 							} else {
-								window.location.replace(d.url);
+								location.reload();
+								//window.location.replace(d.url);
+							}
+						});
+					break;
+					case 'login':
+						f.addClass('loading');
+						ajaxCallback(formData, '/user/loginpost', function (d) {
+							f.removeClass('loading');
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								location.reload();
 							}
 						});
 					break;
@@ -369,6 +383,9 @@ jQuery(document).ready(function($j){
 
 	//show error function, errors should be 'element':['errorText']
 	function showError(errors,f){
+		if($('.general has-error has-feedback').length > 0){
+			$('.general has-error has-feedback').remove();
+		}
 		//clean errors first
 		$.each($('.form-group'),function(i,v){
 			if($(v).hasClass('has-error')){
@@ -379,11 +396,15 @@ jQuery(document).ready(function($j){
 		//show errors
 		if(typeof errors !== 'undefined'){
 			$.each(errors,function(i,v){
+				console.log(errors);
 				formgroup = f.find('#'+i).closest('.form-group');
 				errorblock = $('<div class="help-block with-errors"><ul class="list-unstyled"></ul></div>');
 				$.each(v,function(vi,vv){
 					errorblock.append('<li>'+vv+'</li>');
 				});
+				if(i == 'general'){
+					f.append('<p class="general-error bg-danger">'+errorblock.html()+'</p>');
+				}
 				formgroup.append(errorblock);
 				formgroup.addClass('has-error has-feedback');
 			});

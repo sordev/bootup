@@ -11,7 +11,8 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::get('blog/{category_slug}/{slug}', 'ContentController@blogItem');
 
 	//User Route
-	Route::match(['get', 'post'], '/user/login/{provider?}', 'UserController@login');
+	Route::get('/user/login/{provider?}', 'UserController@login');
+	Route::post('/user/loginpost', 'UserController@loginPost');
 	Route::get('user/register', 'UserController@create');
 	Route::get('user/logout', 'UserController@logout');
 	Route::post('user/store', 'UserController@store');
@@ -38,11 +39,13 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::post('project/claim/rewardmodal', 'ProjectController@claimRewardModal');
 	Route::post('project/claim/reward', 'ProjectController@claimReward');
 	
+	Route::get('project/add', 'ProjectController@add');
+	
 	//Edit routes
 	Route::group(['middleware' => ['auth']], function () {
 		//User Projects
 		Route::get('user/projects', 'ProjectController@userProjects');
-		Route::get('project/add', 'ProjectController@add');
+		
 		Route::get('project/edit/{id?}', 'ProjectController@edit');
 		Route::post('project/update', 'ProjectController@update');
 		Route::get('project/delete/{id?}', 'ProjectController@delete');

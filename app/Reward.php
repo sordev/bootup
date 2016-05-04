@@ -11,8 +11,7 @@ class Reward extends Model {
 	
 	public function getAmountLeftAttribute(){
 		$amount = $this->amount;
-		$sold = \App\Payment::where('reward_id',$this->id)->get();
-		
+		$sold = \App\Payment::where('reward_id',$this->id)->where('status',1)->get();
 		return (int)$amount-count($sold);
 	}
 

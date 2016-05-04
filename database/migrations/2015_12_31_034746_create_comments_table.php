@@ -11,7 +11,10 @@ class CreateCommentsTable extends Migration {
 			$table->increments('id');
 			$table->timestamps();
 			$table->softDeletes();
-			$table->integer('item_id');
+			$table->integer('user_id')->nullable();
+			$table->integer('reply_id')->nullable();
+			$table->integer('item_id')->nullable();
+			$table->tinyInteger('type');
 			$table->text('comment');
 			$table->tinyInteger('status');
 			$table->string('ip', 15);

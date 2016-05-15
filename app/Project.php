@@ -35,7 +35,7 @@ class Project extends Model {
 	}
 
 	public function comment(){
-		return $this->hasMany('App\Comment','item_id');
+		return $this->hasMany('App\Comment','item_id')->where('reply_id',null)->orderBy('id','DESC');
 	}
 
 	public function donation()

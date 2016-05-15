@@ -44,9 +44,9 @@ class Projects extends Seeder
 		
 		$comments = App\Comment::where('type',1)->where('reply_id',1)->get();
 		foreach($comments as $c){
-			$parents = App\Comment::where('type',1)->where('item_id',$c->id)->get();
-			if($parents->random(1)){
-				$c->reply_id = $parents->random(1)->id;
+			$parents = App\Comment::where('type',1)->where('item_id',$c->item_id)->orderByRaw(("RAND()"))->first();
+			if($parents){
+				$c->reply_id = $parents->id;
 				$c->save();
 			}
 		}

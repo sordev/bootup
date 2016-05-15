@@ -375,6 +375,59 @@ jQuery(document).ready(function($j){
 							}
 						});
 					break;
+					case 'addCommentModal':
+						ajaxCallback(formData,'/comment/addcommentmodal', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								if($('#addcommentmodal').length == 0){
+									$('body').append(d.view);
+								}
+								validateRequired(f)
+								preventFormSubmission();
+								$('#addcommentmodal').modal('show');
+							}
+						});
+					break;
+					case 'replyCommentModal':
+						replyid = btn.data('replyid');
+						ajaxCallback(formData+'&replyid='+replyid,'/comment/addcommentmodal', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								if($('#addcommentmodal'+replyid).length == 0){
+									$('body').append(d.view);
+								}
+								validateRequired(f)
+								preventFormSubmission();
+								$('#addcommentmodal'+replyid).modal('show');
+							}
+						});
+					break;
+					case 'addComment':
+						ajaxCallback(formData,'/comment/addcomment', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								if(d.replyid){
+									$('#comment-reply-'+replyid+'>ul').prepend(d.view);
+								} else {
+									$('.comment-list').prepend(d.view);
+								}
+								$('.modal').modal('hide');
+							}
+						});
+					break;
+					case 'deleteComment':
+						id = btn.data('id');
+						ajaxCallback(formData+'&id='+id,'/comment/deletecomment', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								btn.closest('li.comment').remove();
+							}
+						});
+					break;
 				}
 			}
 		});

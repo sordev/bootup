@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder {
 		$this->call('Roles');
 		$this->call('CategoryTypes');
 		$this->call('ContentTypes');
+		$this->call('CommentTypes');
 		$this->call('Categories');
 		$this->call('Content');
 		$this->call('Projects');

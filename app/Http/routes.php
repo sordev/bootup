@@ -69,7 +69,10 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		//Payments
 		Route::post('project/supporter/listmodal','ProjectController@supporterListModal');
 		Route::get('user/support','UserController@support');
-		
+		//Comments
+		Route::post('comment/addcommentmodal','CommentController@addCommentModal');
+		Route::post('comment/addcomment','CommentController@addComment');
+		Route::post('comment/deletecomment','CommentController@deleteComment');
 	});
 
 	Route::post('project/upload/image', function(){

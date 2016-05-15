@@ -160,7 +160,9 @@
 					{!!$project->detail!!}
 				</div>
 			</div>
-			<div role="tabpanel" class="tab-pane" id="comment">...</div>
+			<div role="tabpanel" class="tab-pane" id="comment">
+				@include('modules.comment.list',['comments'=>$project->comment,'type'=>1,'item_id'=>$project->id])
+			</div>
 		  </div>
 	  </div>
 	  <div class="col-md-4">

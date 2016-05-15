@@ -15,15 +15,19 @@ class Comment extends Model {
 	protected $dates = ['deleted_at'];
 
 	public function project(){
-		return belongsTo('App/Project','item_id');
+		return $this->belongsTo('App\Project','item_id');
 	}
 
 	public function content(){
-		return belongsTo('App/Content','item_id');
+		return $this->belongsTo('App\Content','item_id');
 	}
 
 	public function user(){
-		return belongsTo('App/User','user_id');
+		return $this->belongsTo('App\User','user_id');
+	}
+	
+	public function getReplyAttribute(){
+		return self::where('reply_id',$this->id)->get();
 	}
 
 }

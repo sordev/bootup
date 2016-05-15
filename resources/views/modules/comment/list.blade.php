@@ -16,7 +16,7 @@
 	@if(isset($comments) && !empty($comments))
 		<ul class="list-unstyled comment-list">
 			@foreach($comments as $comment)
-				@include('modules.comment.item',['comment'=>$comment])
+				@include('modules.comment.item',['comment'=>$comment,'type'=>$type,'item_id'=>$item_id])
 			@endforeach
 		</ul>
 	@else

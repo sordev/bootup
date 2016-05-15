@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Category;
+use App\Project;
 use App\Content;
 use App\CategoryType;
 use App\ContentType;
@@ -17,6 +18,19 @@ class ContentController extends Controller
     public function appendScriptStyle(){
 		//for cke
 		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
+	}
+	
+	public function updates(Request $request,$project_id){
+		$project = Project::find($project_id);
+		if($project && $project->user_id == $this->user->id){
+			$this->layout = 'content.table';
+			$this->metas['title'] = trans('project.updates');
+			$this->view = $this->BuildLayout();
+			return $this->view
+				->withContents($this->getContents($request,3,$project->slug));
+		} else {
+			abort('404');
+		}
 	}
 	
 	public function item($slug=null){
@@ -54,6 +68,19 @@ class ContentController extends Controller
 		}
 	}
 
+	public function projectItem($project_slug,$slug){
+		$project = Project::where('slug',$project_slug)->first();
+		$content = Content::where('slug',$slug)->where('category_id',$project->id)->first();
+		if ($content){
+			$this->layout = 'content.item';
+			$this->metas['title'] = $content->title;
+			$this->view = $this->BuildLayout();
+			return $this->view->withContent($content);
+		} else {
+			abort('404');
+		}
+	}
+
 	public function getContents($request,$type=null,$category_slug=null){
 		$contents = Content::orderBy('created_at','desc')->where('status','publish');
 		
@@ -70,7 +97,15 @@ class ContentController extends Controller
 			$contents->where('type',$type);
 		}
 		if($category_slug!=null){
-			$category = Category::where('slug',$category_slug)->first();
+			switch($type){
+				case 1:
+				case 2:
+					$category = Category::where('slug',$category_slug)->first();
+				break;
+				case 3:
+					$category = Project::where('slug',$category_slug)->first();
+				break;
+			}
 			$contents->where('category_id',$category->id);
 		}
 		if($request->has('status')){

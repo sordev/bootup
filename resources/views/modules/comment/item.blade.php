@@ -9,14 +9,16 @@
 		</div>
 		@if(Auth::user())
 			{!! Form::open(array('url'=>'/','method'=>'post','class'=>'preventSubmit')) !!}
-			<div class="btn btn-default" data-action="replyCommentModal" data-replyid="{{{$comment->id}}}">
-				{{trans('comment.reply')}}
-			</div>
-			@if(Auth::user() && Auth::user()->id == $comment->user->id)
-				<div class="btn btn-default" data-action="deleteComment" data-id="{{{$comment->id}}}">
-					{{trans('comment.delete')}}
+				<div class="btn btn-default" data-action="replyCommentModal" data-replyid="{{{$comment->id}}}">
+					{{trans('comment.reply')}}
 				</div>
-			@endif
+				{!! Form::hidden('type',$type) !!}
+				{!! Form::hidden('item_id',$item_id) !!}
+				@if(Auth::user() && Auth::user()->id == $comment->user->id)
+					<div class="btn btn-default" data-action="deleteComment" data-id="{{{$comment->id}}}">
+						{{trans('comment.delete')}}
+					</div>
+				@endif
 			{!! Form::close() !!}
 		@endif
 	</div>

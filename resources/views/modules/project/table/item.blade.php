@@ -64,6 +64,8 @@
 		<br>
 		<a href="{{{url('project/delete/'.$p->id)}}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{{trans('messages.delete')}}}</a>
 		<br>
+		<a href="{{{url('project/updates/'.$p->id)}}}" class="btn btn-default">{{{trans('project.updates')}}}</a>
+		<br>
 		{!! Form::open() !!}
 		<a href="{{{url('project/delete/'.$p->id)}}}" class="btn btn-default" data-projectid="{{$p->id}}" data-action="supporterListModal">{{{trans('project.supporters')}}}</a> 
 		{!! Form::close() !!}

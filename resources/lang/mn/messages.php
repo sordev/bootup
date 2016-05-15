@@ -30,5 +30,6 @@ return [
 	'restore' => 'Сэргээх',
 	'search' => 'Хайх',
 	'anonymous' => 'Нууцлаг',
+	'add' => 'Нэмэх',
 	
 ];

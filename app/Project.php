@@ -35,12 +35,17 @@ class Project extends Model {
 	}
 
 	public function comment(){
-		return $this->hasMany('App\Comment','item_id')->where('reply_id',null)->orderBy('id','DESC');
+		return $this->hasMany('App\Comment','item_id')->where('type',1)->where('reply_id',null)->orderBy('id','DESC');
 	}
 
 	public function donation()
 	{
 		return $this->hasMany('App\Payment', 'project_id')->where('reward_id',null);
+	}
+
+	public function updates()
+	{
+		return $this->hasMany('App\Content', 'category_id');
 	}
 
 	public function leader()

@@ -44,7 +44,7 @@ class CommentController extends Controller {
 			$comment->comment = $request->get('comment');
 			$comment->status = 1;
 			$comment->save();
-			$commentView = view('modules.comment.item', ['comment'=>$comment])
+			$commentView = view('modules.comment.item', ['comment'=>$comment,'type'=>$comment->type,'item_id'=>$comment->item_id])
 				->render()
 				;
 			$return['status'] = true;

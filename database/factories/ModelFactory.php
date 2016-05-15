@@ -107,9 +107,10 @@ $factory->define(App\Content::class, function (Faker\Generator $faker) {
 		'category_id' => rand(6,15),
 		'type'=> 2,
 		'title' => $faker->text(30),
-		'slug' => $faker->word().'-'.$faker->word(),
+		'slug' => $faker->word().'-'.$faker->word().'-'.$faker->word(),
 		'content' => $faker->text(),
 		'status' => 'publish',
+		'comments' => 1,
 		'user_id' => 1,
 		'showinfo' => rand(0,1),
     ];

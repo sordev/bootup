@@ -15,4 +15,7 @@
 
 @section('content')
 	{!!$content->content!!}
+	@if($content->comments == 1)
+		@include('modules.comment.list',['comments'=>$content->comment,'type'=>3,'item_id'=>$content->id])
+	@endif
 @endsection

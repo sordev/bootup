@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Category;
+use App\Project;
 use Str;
 class Content extends Model
 {
@@ -27,12 +28,16 @@ class Content extends Model
 		return $this->belongsTo('App\Category','category_id');
 	}
 
+	public function project(){
+		return $this->belongsTo('App\Project','category_id');
+	}
+
 	public function contenttype(){
 		return $this->belongsTo('App\ContentType','type');
 	}
 
 	public function comment(){
-		return $this->hasMany('App\Comment','item_id');
+		return $this->hasMany('App\Comment','item_id')->where('type',3)->where('reply_id',null)->orderBy('id','DESC');
 	}
 
 	public function getSummaryAttribute(){
@@ -43,12 +48,16 @@ class Content extends Model
 	}
 
 	public function getUrlAttribute(){
+		$url = '';
 		switch($this->type){
 			case 1:
 				$url = $this->slug;
 			break;
 			case 2:
 				$url = 'blog/'.$this->category->slug.'/'.$this->slug;
+			break;
+			case 3:
+				$url = 'projects/'.$this->project->slug.'/updates/'.$this->slug;
 			break;
 		}
 		return url($url);

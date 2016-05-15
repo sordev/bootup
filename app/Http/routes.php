@@ -9,6 +9,7 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::get('blog/category/{category_slug}', 'ContentController@blog');
 	Route::get('blog/search', 'ContentController@blog');
 	Route::get('blog/{category_slug}/{slug}', 'ContentController@blogItem');
+	
 
 	//User Route
 	Route::get('/user/login/{provider?}', 'UserController@login');
@@ -35,11 +36,12 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::get('project/search', 'ProjectController@projectsSearch');
 	//Project
 	Route::get('projects/{slug?}', 'ProjectController@project');
-	
 	Route::post('project/claim/rewardmodal', 'ProjectController@claimRewardModal');
 	Route::post('project/claim/reward', 'ProjectController@claimReward');
-	
 	Route::get('project/add', 'ProjectController@add');
+	
+	//Project Update
+	Route::get('projects/{projectslug?}/updates/{updateslug?}', 'ContentController@projectItem');
 	
 	//Edit routes
 	Route::group(['middleware' => ['auth']], function () {
@@ -51,6 +53,9 @@ Route::group(['middleware' => ['web','striptags']], function () {
 		Route::get('project/delete/{id?}', 'ProjectController@delete');
 		Route::get('project/enable/{id?}', 'ProjectController@enable');
 		Route::get('project/disable/{id?}', 'ProjectController@disable');
+		Route::get('project/updates/{id?}', 'ContentController@updates');
+		Route::get('project/update/create', 'ContentController@updates');
+		
 		Route::get('project/lock/{id?}', 'ProjectController@lock');
 		Route::post('project/postnext', 'ProjectController@postNext');
 		//Goal

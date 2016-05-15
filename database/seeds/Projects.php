@@ -12,24 +12,30 @@ class Projects extends Seeder
     public function run()
     {
 		factory(App\Project::class, 20)->create()
-		->each(function($u) {
+		->each(function($project) {
 			$max = rand(5,10);
 			for ($i=0;$i<$max;$i++){
-				$u->goal()->save(factory(App\Goal::class)->make());
+				$project->goal()->save(factory(App\Goal::class)->make());
 			}
 			$max = rand(5,10);
 			for ($i=0;$i<$max;$i++){
-				$u->reward()->save(factory(App\Reward::class)->make());
+				$project->reward()->save(factory(App\Reward::class)->make());
 			}
 			$max = rand(5,20);
 			for ($i=0;$i<$max;$i++){
-				$u->payment()->save(factory(App\Payment::class)->make());
+				$project->payment()->save(factory(App\Payment::class)->make());
 			}
 			$max = rand(5,20);
 			for ($i=0;$i<$max;$i++){
-				$u->comment()->save(factory(App\Comment::class)->make([
+				$project->comment()->save(factory(App\Comment::class)->make([
 					'type'=>1
 				]));
+			}
+			$max = rand(5,20);
+			for ($i=0;$i<$max;$i++){
+				$project->updates()->save(factory(App\Content::class)->make([
+					'type'=>3
+					]));
 			}
 		});
 		

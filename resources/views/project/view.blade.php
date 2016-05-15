@@ -104,8 +104,9 @@
 	  <div>
 		  <div class="container">
 			  <ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#description" aria-controls="description" role="tab" data-toggle="tab">Төсөл</a></li>
-				<li role="presentation"><a href="#comment" aria-controls="comment" role="tab" data-toggle="tab">Сэтгэгдлүүд</a></li>
+				<li role="presentation" class="active"><a href="#description" aria-controls="description" role="tab" data-toggle="tab">{{trans('project.project')}}</a></li>
+				<li role="presentation"><a href="#updates" aria-controls="updates" role="tab" data-toggle="tab">{{trans('project.updates')}}</a></li>
+				<li role="presentation"><a href="#comment" aria-controls="comment" role="tab" data-toggle="tab">{{trans('comment.comments')}}</a></li>
 			  </ul>
 		  </div>
 	  </div>
@@ -162,6 +163,17 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="comment">
 				@include('modules.comment.list',['comments'=>$project->comment,'type'=>1,'item_id'=>$project->id])
+			</div>
+			<div role="tabpanel" class="tab-pane" id="updates">
+				@foreach($project->updates as $content)
+					<article>
+					<h2><a href="{{$content->url}}">{{{$content->title}}}</a></h2>
+					<div><small>{{trans('blog.author')}} {{{$content->author->firstname}}} {{{$content->author->lastname}}} | {{trans('messages.date')}} {{{$content->updated_at->format('Y/m/d')}}}</small></div>
+					
+					{{{$content->summary}}}
+					</article>
+					<hr>
+				@endforeach
 			</div>
 		  </div>
 	  </div>

@@ -15,6 +15,7 @@ class CommentTypes extends Seeder
 			['title'=>'Төсөл','slug'=>'project'],
 			['title'=>'Агуулга','slug'=>'content'],
 			['title'=>'Блог','slug'=>'blog'],
+			['title'=>'Төслийн шинэчилэл','slug'=>'updates'],
 		]);
     }
 }

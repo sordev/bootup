@@ -6,6 +6,8 @@ use Validator;
 use Hash;
 use Auth;
 use File;
+use Mail;
+use Image;
 
 //use base controller
 use App\Http\Controllers\Controller;
@@ -14,15 +16,30 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Role;
 use App\UserSocial;
+use App\Payment;
 
 //settings model
 use App\Setting;
 
 use Response;
 use Socialite;
+use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller {
-
+	
+	public function appendScriptStyle(){
+		//for upload
+		array_push($this->scripts['footer'],'upload/jquery.ui.widget.js');
+		array_push($this->scripts['footer'],'upload/load-image.all.min.js');
+		array_push($this->scripts['footer'],'upload/canvas-to-blob.min.js');
+		array_push($this->scripts['footer'],'upload/jquery.iframe-transport.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload-process.js');
+		array_push($this->scripts['footer'],'upload/jquery.fileupload-image.js');
+		array_push($this->styles,'jquery.fileupload.css');
+		//for cke
+		array_push($this->scripts['header'],'../libraries/ckeditor/ckeditor.js');
+	}
   /**
    * Display a listing of the resource.
    *
@@ -55,42 +72,96 @@ class UserController extends Controller {
    *
    * @return Response
    */
-  public function store(Request $request)
-  {
+	public function store(Request $request){
 		$v = Validator::make($request->all(), [
+			'username' => 'required|unique:users|alpha_num',
 			'email' => 'required|unique:users|email',
+			'emailConfirmation' => 'required|same:email',
 			'password' => 'required',
+			'passwordConfirmation' => 'required|same:password',
 			'tos' => 'required',
 		]);
 		
 		//recaptcha implementation 
 		$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
 		$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-		
+		//dd($resp);
 		if ($v->fails() || $resp->isSuccess()==false){
 			if ($resp->isSuccess()==false){
 				$v->errors()->add('g-recaptcha', 'Би машин биш гэсэн чагтыг тэмдэглэнэ үү');
 			}
-			return redirect('/user/register')->back()->withErrors($v->errors())->withInput($request->except('password'));
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+			//return redirect('/user/register')->back()->withErrors($v->errors())->withInput($request->except('password'));
+		} else {
+			$user = new User;
+			$user->email = $request->input('email');
+			$user->password = Hash::make($request->input('password'));
+			$user->register_ip = $_SERVER['REMOTE_ADDR'];
+			$user->registered_with = 'local';
+			$user->public = 0;
+			$user->status = 1;
+			$user->role = 2;
+			$user->save();
+			$this->sendThankYouEmail($user);
+			Auth::login($user,true);
+			$return['status'] = true;
+			$return['url'] = url('/user/profile/'.$user->usr_id);
+			
 		}
-		
-		$user = new User;
-		$user->email = $request->input('email');
-		$user->password = Hash::make($request->input('password'));
-		$user->register_ip = $_SERVER['REMOTE_ADDR'];
-		$user->registered_with = 'local';
-		$user->public = 0;
-		$user->status = 1;
-		$user->role = 2;
-		$user->save();
-		
-		Auth::login($user,true);
-		return redirect('/user/profile/'.$user->usr_id);
-  }
+		return $return;
+	}
+
+	public function sendThankYouEmail($user){
+		Mail::send('email.thankyou', ['user' => $user], function ($m) use ($user) {
+			$m->from('noreply@bootup.mn', 'Бүүтап сайтын автомат хариулагч');
+			$m->to($user->email, $user->fullname)->subject('Бүүтап сайтанд бүртгүүлсэнд баярлалаа!');
+		});
+	}
+	
+	public function loginPost(Request $request){
+		//validate input
+		$v = Validator::make($request->all(), [
+			'email' => 'required|email',
+			'password' => 'required'
+		]);
+
+		//recaptcha implementation 
+		//TODO after 5 attempt show recaptcha
+		//$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
+		//$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+		if ($v->fails()){
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+		}
+
+		$userdata = array(
+			'email' => $request->get('email'),
+			'password' => $request->get('password'),
+		);
+
+		$remember = false;
+		if ($request->has('remember_me') && $request->get('remember_me')==1){
+			$remember = true;
+		}
+
+		if (Auth::attempt($userdata,$remember)) {
+			$currentPath= Route::getFacadeRoot()->current()->uri();
+			$return['status'] = true;
+			$return['url'] = url($currentPath);
+		} else {
+			$return['status'] = false;
+			$return['errors'] = ['general'=>['Please check your email and/or password or register']];
+		}
+		return $return;
+	}
   
-  public function login(Request $request,$provider=null){
+	public function login(Request $request,$provider=null){
 		$this->layout = 'user.login';
-		$this->metas['title'] = "User Profile";
+		$this->metas['title'] = "Хэрэглэгч нэвтрэх хэсэг";
 		$this->view = $this->BuildLayout();
 		$user = $socialUser = '';
 
@@ -123,7 +194,7 @@ class UserController extends Controller {
 			$firstname = reset($nameArray);
 			$lastname = str_replace($firstname,'',trim($name));
 			$fb_id = $tw_id = $gp_id = $photo_url = $local_photo_url = '';
-			$avatarSavePath = public_path('images/users/avatars');
+			$avatarSavePath = public_path('images/avatar');
 			switch ($provider) {
 				case 'facebook':
 					$fb_id = $socialUser->id;
@@ -167,9 +238,21 @@ class UserController extends Controller {
 				]);
 				
 				if (!empty($photo_url)){
-					$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
-					$destinationPath = public_path('images/users/avatars');
-					file_put_contents($destinationPath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
+					$thumbnail = Image::make($photo_url);
+					$thumbnail->resize(80, 80);
+					$thumbnail->save($avatarSavePath.'/thumbnail/'.$user->id.'.jpg');
+					
+					$medium = Image::make($photo_url);
+					$medium->resize(160, 160);
+					$medium->save($avatarSavePath.'/medium/'.$user->id.'.jpg');
+					
+					$large = Image::make($photo_url);
+					$large->resize(360, 360);
+					$large->save($avatarSavePath.'/large/'.$user->id.'.jpg');
+					
+					//$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
+					$ext = 'jpg';
+					//file_put_contents($avatarSavePath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
 					$local_photo_url=$user->id.'.'.$ext;
 					$user->avatar = $local_photo_url;
 					$user->save();
@@ -179,6 +262,8 @@ class UserController extends Controller {
 				$usersocial->social = $provider;
 				$usersocial->socialname = $socialUser->id;
 				$user->usersocial()->save($usersocial);
+				
+				$this->sendThankYouEmail($user);
 			}
 			Auth::login($user,true);
 		}
@@ -188,40 +273,6 @@ class UserController extends Controller {
 			return redirect('/user/profile');
 		}
 		
-		//if doing login
-		if ($request->isMethod('post')){
-			//validate input
-			$v = Validator::make($request->all(), [
-				'email' => 'required|email',
-				'password' => 'required'
-			]);
-			
-			//recaptcha implementation 
-			//TODO after 5 attempt show recaptcha
-			//$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
-			//$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-			
-			if ($v->fails()){
-				return redirect()->back()->withErrors($v->errors());
-			}
-			
-			$userdata = array(
-				'email' => $request->get('email'),
-				'password' => $request->get('password'),
-			);
-			
-			$remember = false;
-			if ($request->has('remember_me') && $request->get('remember_me')==1){
-				$remember = true;
-			}
-			
-			if (Auth::attempt($userdata,$remember)) {
-				return redirect()->intended('defaultpage');
-			} else {
-				// validation not successful, send back to form 
-				return redirect()->back()->withErrors('Please check your email and/or password or register')->withInput();
-			}
-		} 
 		return $this->view;
 	}
 	
@@ -231,35 +282,24 @@ class UserController extends Controller {
 		return redirect('/user/login'); // redirect the user to the login screen
 	}
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function show($id)
-  {
-    
-  }
-
 	public function profile($id=null){
 		$this->layout = 'user.profile';
 		if($id!=null){
 			$user = User::getUserbyid($id);
 			if ($user){
 				$this->layout = 'user.profile';
-				$this->metas['title'] = $user->firstname." ".$user->lastname." -н бүртгэл";
+				$this->metas['title'] = $user->fullname." -н бүртгэл";
 				$this->view = $this->BuildLayout();
+				return $this->view->withUser($user);
 			} else {
 				$this->metas['title'] = "Хэрэглэгч олдсонгүй";
-				$this->view = $this->BuildLayout();
 			}
 		} else if($this->user){
 			$this->metas['title'] = "Миний бүртгэл";
-			$this->view = $this->BuildLayout();
 		} else {
 			return redirect('/user/login');
 		}
+		$this->view = $this->BuildLayout();
 		return $this->view;
 	}
 
@@ -269,10 +309,16 @@ class UserController extends Controller {
    * @param  int  $id
    * @return Response
    */
-  public function edit($id)
-  {
-    
-  }
+	public function edit(){
+		$this->appendScriptStyle();
+		$this->layout = 'user.edit';
+		$this->metas['title'] = "Бүртгэлээ засварлах";
+		$this->view = $this->BuildLayout();
+
+		return $this->view
+			->withUser($this->user)
+		;
+	}
 
   /**
    * Update the specified resource in storage.
@@ -280,24 +326,33 @@ class UserController extends Controller {
    * @param  int  $id
    * @return Response
    */
-  public function update($id)
-  {
-    
-  }
+	public function update(Request $request){
+		$rules = [
+			'lastname' => 'required',
+			'firstname' => 'required',
+			'username' => 'required',
+			'email' => 'required',
+			'public' => 'required'
+		];
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			$return['errors'] = $v->errors();
+		} else {
+			$this->user->lastname = $request->get('lastname');
+			$this->user->firstname = $request->get('firstname');
+			$this->user->username = $request->get('username');
+			$this->user->email = $request->get('email');
+			$this->user->public = $request->get('public');
+			$this->user->avatar = $request->get('avatar');
+			$this->user->bio = $request->get('bio');
+			$this->user->save();
+			
+			$return['errors'] = ['Таны мэдээлэл шинэчилэгдлээ'];
+		}
+		return redirect()->back()->withErrors($return['errors']);
+	}
 
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function destroy($id)
-  {
-    
-  }
-  
-	public function editPassword(Request $request)
-    {
+	public function editPassword(Request $request){
         $this->layout = 'user.editpassword';
 		$this->metas['title'] = "Нууц үг солих";
 		$this->view = $this->BuildLayout();
@@ -310,9 +365,8 @@ class UserController extends Controller {
 		}
 		return redirect('/user/login');
     }
-	
-	public function updatePassword(Request $request)
-    {
+
+	public function updatePassword(Request $request){
 		$v = Validator::make($request->all(), [
 			'password_new' => 'required|min:5|max:16|confirmed',
 			'password_new_confirmation' => ''
@@ -345,7 +399,114 @@ class UserController extends Controller {
 		
 		return redirect()->back()->withStatus('Password Changed');
     }
-  
+
+	public function searchUserModal(){
+		$searchUserModal = view('modules.modal', ['id'=>'searchusermodal','title' => 'Хэрэглэгч хайх','modalbody'=>'modules.user.search'])
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $searchUserModal;
+		return $return;
+	}
+
+	public function contactUserModal(Request $request){
+		$user_id = $request->get('user_id');
+		$user = User::find($user_id);
+		$contactUserModal = view('modules.modal', ['id'=>'contactusermodal'.$user_id,'title' => $user->fullname.' -д захиа илгээх','modalbody'=>'modules.user.contact'])
+			->withUser($user)
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $contactUserModal;
+		return $return;
+	}
+
+	public function contactUser(Request $request){
+		$v = Validator::make($request->all(), [
+			'email' => 'required|email',
+			'fullname' => 'required',
+			'message' => 'required|min:20|max:1000',
+		]);
+		
+		if ($v->fails()){
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+		} else {
+			$from = $request->get('email');
+			$fullname = $request->get('fullname');
+			$mailmessage = $request->get('message');
+			$user_id = $request->get('id');
+			$user = User::find($user_id);
+			if($user){
+				Mail::send('email.contactuser', ['user' => $user,'mailmessage'=>$mailmessage,'fullname'=>$fullname], function ($m) use ($user,$from,$fullname) {
+					$m->from($from, $fullname);
+					$m->to($user->email, $user->fullname)->subject('Бүүтап-р дамжуулан таньтай холбогдож байна!');
+				});
+				$return['status'] = true;
+				$return['view'] = 'Таны захиа илгээгдлээ';
+			} else {
+				$return['status'] = false;
+				$return['errors'] = ['Хэрэглэгч олдсонгүй'];
+			}
+		}
+		
+		return $return;
+	}
+
+	public function searchUserList(Request $request){
+		$return['status'] = false;
+		$v = Validator::make($request->all(), [
+			'searchuserfield' => 'required'
+		]);
+		if ($v->fails()){
+			$errors = $v->errors();
+			$return['status'] = false;
+			$return['errors'] = $errors;
+		} else {
+			//check if number
+			$f = $request->get('searchuserfield');
+			$userlist = [];
+			$v = Validator::make($request->all(), ['searchuserfield' => 'integer']);
+			if ($v->fails()){
+				// check if email
+				$v = Validator::make($request->all(), ['searchuserfield' => 'email']);
+				if ($v->fails()){
+					$return['status'] = true;
+					$return['query'] = $f;
+					$userlist = User::where('username','like','%'.$f.'%')
+						->orWhere('firstname','like','%'.$f.'%')
+						->orWhere('lastname','like','%'.$f.'%')
+						->get();
+				} else {
+					$return['status'] = true;
+					$userlist = User::where('email',$f)->get();
+				}
+			} else {
+				$return['status'] = true;
+				$userlist = User::where('id',$f)->get();
+			}
+			if($userlist->isEmpty()){
+				$return['status'] = false;
+				$return['errors'] = ['searchuserfield'=>['Хайлтанд тохирох хэрэглэгч олдсонгүй']];
+				$return['userlist'] = $userlist;
+			} else {
+				$return['view'] = view('modules.user.list',['users'=>$userlist,'add'=>true])->render();
+				$return['userlist'] = $userlist;
+			}
+		}
+		return $return;
+	}
+
+	public function support(){
+		$this->layout = 'user.support';
+		$this->metas['title'] = "Миний дэмжсэн төслүүд";
+		$this->view = $this->BuildLayout();
+		return $this->view
+			->withUser($this->user)
+			->withPayments($this->user->payments()->paginate(5))
+		;
+	}
 }
 
 ?>

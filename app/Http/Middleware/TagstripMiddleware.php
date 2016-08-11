@@ -22,7 +22,7 @@ class TagstripMiddleware
         $input = $request->all();
 
         array_walk_recursive($input, function(&$input) {
-            $input = strip_tags($input);
+            $input = strip_tags($input,'<p><b><strong><i><ul><li><table><img><hr><a><h2><h3><h4><pre><code>');
         });
 
         $request->merge($input);

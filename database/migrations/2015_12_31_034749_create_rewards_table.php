@@ -13,6 +13,7 @@ class CreateRewardsTable extends Migration {
 			$table->integer('project_id')->unsigned();
 			$table->string('title', 255);
 			$table->decimal('value', 10,2);
+			$table->string('image');
 			$table->string('description');
 			$table->string('amount');
 			$table->date('estimated_date');

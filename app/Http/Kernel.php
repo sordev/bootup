@@ -29,10 +29,7 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
-			// Adding tag strip in within web middleware
-            \App\Http\Middleware\TagstripMiddleware::class,
         ],
-
         'api' => [
             'throttle:60,1',
         ],
@@ -51,5 +48,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 		'admin' => \App\Http\Middleware\Admin::class,
+		'striptags' => \App\Http\Middleware\TagstripMiddleware::class,
     ];
 }

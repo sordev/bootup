@@ -40,94 +40,56 @@ class CategoryController extends Controller {
    *
    * @return Response
    */
-  public function create($id=null)
-  {
-	  
-    $this->layout = 'categories.create';
-	$this->metas['title'] = "Ангилал нэмэх";
-	$this->view = $this->BuildLayout();
-	$this->view->with('category_type_options',$this->getCategoryTypeOptions());
-	if($id!=null){
-		$category = Category::find($id);
-		$this->view->withCategory($category);
+	public function create($id=null){
+		$this->layout = 'categories.create';
+		$this->metas['title'] = "Ангилал нэмэх";
+		if($id!=null){
+			$this->metas['title'] = "Ангилал засах";
+		}
+	   
+		$this->view = $this->BuildLayout();
+		$this->view->with('category_type_options',$this->getCategoryTypeOptions());
+		if($id!=null){
+			$category = Category::find($id);
+			$this->view->withCategory($category);
+		}
+		return $this->view;
 	}
-	return $this->view;
-  }
 
   /**
    * Store a newly created resource in storage.
    *
    * @return Response
    */
-  public function store(Request $request)
-  {
-	$rules = [
-		'title' => 'required|unique:categories',
-		'slug' => 'required|unique:categories',
-		'type' => 'required'
-	];
-	if($request->has('id')){
-		$category = Category::find($request->input('id'));
+	public function store(Request $request){
 		$rules = [
-			'title' => 'required|unique:categories,title,'.$category->id,
-			'slug' => 'required|unique:categories,slug,'.$category->id,
+			'title' => 'required|unique:categories',
+			'slug' => 'required|unique:categories',
 			'type' => 'required'
 		];
-	}
-	
-    $v = Validator::make($request->all(), $rules);
-	if ($v->fails()){
-		return redirect()->back()->withErrors($v->errors())->withInput();
-	}
-	if($request->has('id')){
+		if($request->has('id')){
+			$category = Category::find($request->input('id'));
+			$rules = [
+				'title' => 'required|unique:categories,title,'.$category->id,
+				'slug' => 'required|unique:categories,slug,'.$category->id,
+				'type' => 'required'
+			];
+		}
 		
-		$category->fill($request->all());
-		$category->save();
-	} else {
-		$category = Category::create($request->all());
+		$v = Validator::make($request->all(), $rules);
+		if ($v->fails()){
+			return redirect()->back()->withErrors($v->errors())->withInput();
+		}
+		if($request->has('id')){
+			
+			$category->fill($request->all());
+			$category->save();
+		} else {
+			$category = Category::create($request->all());
+		}
+		return redirect('admin/categories/edit/'.$category->id)->with('message', 'Login Failed');
 	}
-	
-	return redirect('admin/categories/create/'.$category->id);
-  }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function show($id)
-  {
-    
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function edit($id)
-  {
-    
-  }
-
-  /**
-   * Update the specified resource in storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function update(Request $request)
-  {
-  }
-
-  /**
-   * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
   public function destroy($id)
   {
     

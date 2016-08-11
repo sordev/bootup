@@ -1,22 +1,51 @@
 @extends('layouts.default')
 @section('header')
-	<p>Төслүүд.</p>
-@endsection
+	@if(isset($category) and $category == false)
+		@parent
+	@else
+	</div>
+		<div class="gray-box padding-lg">
+			<div class="container text-center">
+				<h1>Төслүүдийн ангилалалууд.</h1>
+				@if(isset($navigations['categories']))
+					@foreach($navigations['categories'] as $n)
+						<a class="btn btn-default btn-lg" href="{{{$n['url']}}}" title="{{{$n['title']}}}">{{{$n['title']}}}</a>
+					@endforeach
+				@endif
+			</div>
+		</div>
+	<div class="container">
+	@overwrite
+	@endif
 
 @section('content')
 	@include('errors.errors')
-	@if($projects)
-		<div class="row">
-		@foreach($projects as $p)
-			<div class="col-md-3">
-				<div class="project">
-					<h3 class="project-title">{{{$p->title}}}</h3>
-					<div class="project-category">Ангилал: @include('modules.categories.list',['categories'=>$p->categories])</div>
-					<div class="project-teammembers">Төслийн гишүүд: @include('modules.user.list',['users'=>$p->team])</div>
-				</div>
+	@if(isset($featured) && $featured)
+		<section>
+			<div class="padding">
 			</div>
-		@endforeach
+				<h3 class="text-center">Онцлох төслүүд</h3>
+				@include('modules.slideshow.slideshow',['slideshow'=>$featured,'id'=>'project'])
+			<div class="padding">
+			</div>
+		<section>
+	@endif
+	@if($projects)
 		</div>
-		{!! $projects->links() !!}
+			<section>
+				<div class="gray-box padding">
+					<div class="container">
+						<div class="row">
+							@foreach($projects as $p)
+								@include('modules.project.card.item',['p'=>$p])
+							@endforeach
+						</div>
+						<div class="text-center">
+							{!! $projects->links() !!}
+						</div>
+					</div>
+				</div>
+			<section>
+		<div class="container">
 	@endif
 @endsection

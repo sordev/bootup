@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => env('MAIL_FROM_ADDRESS', 'noreply@bootup.mn'), 'name' => env('MAIL_FROM_NAME', 'Бүүтап.мн автомат хариулагч')],
 
     /*
     |--------------------------------------------------------------------------

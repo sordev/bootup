@@ -1,5 +1,6 @@
 @extends('layouts.default')
 @section('header')
+	@parent
 	<p>Бүртгүүлэхийн тулд дараахи талбаруудын бөглөөрэй.</p>
 @endsection
 

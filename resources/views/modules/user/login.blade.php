@@ -1,4 +1,4 @@
-{!! Form::open(array('url'=>'user/login','method'=>'post','class'=>'')) !!}
+{!! Form::open(array('url'=>'user/login','method'=>'post','class'=>'preventSubmit')) !!}
 	@include('modules.form.formgroup',['type'=>'email','label'=>'Имэйл','id'=>'email',$required='required'])
 	@include('modules.form.formgroup',['type'=>'password','label'=>'Нууц үг','id'=>'password',$required='required'])
 	<div class="checkbox">
@@ -6,7 +6,7 @@
 			{!! Form::checkbox('remember_me',null,false,["id"=>"remember_me"]) !!} Энэ компьютер дээр сануулах
 		</label>
 	</div>
-	{!! Form::submit('Нэвтрэх',['class'=>'btn btn-default']) !!}
+	{!! Form::submit('Нэвтрэх',['class'=>'btn btn-default','data-action'=>'login']) !!}
 	<br>эсвэл<br>
 	@include('modules.user.social')
 {!! Form::close() !!}

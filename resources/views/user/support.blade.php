@@ -1,0 +1,66 @@
+@extends('layouts.default')
+@section('header')
+	@parent
+@endsection
+
+@section('content')
+	@include('errors.errors')
+	@if($payments)
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						{{trans('payment.ordernumber')}}
+					</th>
+					<th>
+						{{trans('messages.date')}}
+					</th>
+					<th>
+						{{trans('project.name')}}
+					</th>
+					<th>
+						{{trans('project.reward')}}
+					</th>
+					<th>
+						{{trans('messages.value')}}
+					</th>
+					<th>
+						{{trans('messages.status')}}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach($payments as $p)
+					<tr>
+						<td>
+							{{$p->id}}
+						</td>
+						<td>
+							{{$p->updated_at->format('Y-m-d H:s')}}
+						</td>
+						<td>
+							@if($p->project)
+								<a href="$p->project->url" target="_blank" title="{{$p->project->title}}">{{$p->project->title}}</a>
+							@endif
+						</td>
+						<td>
+							@if($p->reward)
+								{{$p->reward->title}}
+							@endif
+						</td>
+						<td>
+							{{$p->valuetext}}
+						</td>
+						<td>
+							{{$p->statustext}}
+						</td>
+					</tr>
+				@endforeach
+			</tbody>
+			<tfoot>
+			</tfoot>
+		</table>
+	@else
+		{{trans(nosupportedproject)}}
+	@endif
+@endsection

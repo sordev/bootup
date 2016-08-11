@@ -3,3 +3,8 @@
 Homestead.yaml
 Homestead.json
 .env
+public/libraries/bower_components/jquery/
+public/images/projects/
+public/images/avatar/
+public/images/reward/
+public/images/project/

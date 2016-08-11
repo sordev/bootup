@@ -9,14 +9,15 @@ use App\CategoryType;
 class Category extends Model {
 
 	protected $table = 'categories';
+	protected $guarded = [];
 	public $timestamps = true;
+
 	public function getTypetitleAttribute()
     {
 		$return = CategoryType::where('id',$this->type)->first();
         return $return->title;
     }
-	protected $guarded = [];
-	
+
 	public static function getCategoryOptions($type=null){
 		$return = [];
 		if($type != null){
@@ -32,5 +33,9 @@ class Category extends Model {
 
 	public function getTypeslugAttribute(){
 		return CategoryType::find($this->type)->slug;
+	}
+
+	public function getUrlAttribute(){
+		return url($this->typeslug.'/category/'.$this->slug);
 	}
 }

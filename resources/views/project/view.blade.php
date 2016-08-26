@@ -19,7 +19,12 @@
 					@endif
 				</div>
 				<div class="col-md-4">
-					<div class="padding-lg">
+					<div class="padding">
+						{!! Form::open(array('url'=>'/','method'=>'post','class'=>'preventSubmit')) !!}
+							{!! Form::submit(trans('project.donate'),['class'=>'btn btn-default btn-lg','data-action'=>'donateModal','data-projectid'=>$project->id]) !!}
+						{!! Form::close()!!}
+						<div class="padding-sm">
+						</div>
 						<div>
 							<a class="btn btn-primary" role="button" data-toggle="collapse" href="#collapseDonation" aria-expanded="false" aria-controls="collapseDonation">
 							  Хандивлагчид <span class="badge">{{count($project->donation)}}</span>
@@ -74,7 +79,8 @@
 
 @section('content')
 	@include('errors.errors')
-	
+	<div class="padding-sm">
+	</div>
 	<div class="row">
 		<div class="col-md-8">
 			<div>
@@ -197,7 +203,7 @@
 						{{{$r->description}}}
 						@if($r->amountleft > 0)
 							{!! Form::open(array('url'=>'/','method'=>'post','class'=>'preventSubmit')) !!}
-								{!! Form::submit('Авах',['class'=>'btn btn-default','data-action'=>'claimReward','data-rewardid'=>$r->id]) !!}
+								{!! Form::submit(trans('project.claim'),['class'=>'btn btn-default','data-action'=>'claimRewardModal','data-rewardid'=>$r->id]) !!}
 							{!! Form::close()!!}
 						@endif
 					</div>

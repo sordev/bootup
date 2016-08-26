@@ -9,7 +9,7 @@
 	<p>Ойролцоогоор бэлэн болох огноо: {{{$r->estimated_date}}}</p>
 	@if(isset($remove) && $remove == true)
 		<button type="button" class="btn btn-default" data-action="removeReward" data-rewardid="{{{$r->id}}}">
-			<span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Устгах
+			<span class="glyphicon glyphicon-minus" aria-hidden="true"></span> {{trans('messages.delete')}}
 		</button>
 	@endif
 </li>

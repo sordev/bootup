@@ -27,13 +27,17 @@
 			</div>
 		</div>
 	</section>
+	<div class="padding-sm">
+	</div>
 </div>
 	<section class="blue-box projects">
+		<div class="padding-sm">
+		</div>
 		<div class="container">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab">Онцлох төслүүд</a></li>
-				<li role="presentation"><a href="#new" aria-controls="new" role="tab" data-toggle="tab">Шинээр нэмэгдсэн</a></li>
-				<li role="presentation"><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab">Шинэчилэлт орсон</a></li>
+				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab" class="btn-lg">Онцлох төслүүд</a></li>
+				<li role="presentation" ><a href="#new" aria-controls="new" role="tab" data-toggle="tab" class="btn-lg">Шинээр нэмэгдсэн</a></li>
+				<li role="presentation" ><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab" class="btn-lg">Шинэчилэлт орсон</a></li>
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="featured">
@@ -46,6 +50,8 @@
 					@include('modules.project.homepage.list',['projects'=>$projects['updated']])
 				</div>
 			</div>
+		</div>
+		<div class="padding-sm">
 		</div>
 	</section>
 <div class="container">

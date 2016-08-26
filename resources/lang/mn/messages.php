@@ -31,5 +31,5 @@ return [
 	'search' => 'Хайх',
 	'anonymous' => 'Нууцлаг',
 	'add' => 'Нэмэх',
-	
+	'clickhere'=> 'энд дараад',
 ];

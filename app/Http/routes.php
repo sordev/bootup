@@ -38,6 +38,8 @@ Route::group(['middleware' => ['web','striptags']], function () {
 	Route::get('projects/{slug?}', 'ProjectController@project');
 	Route::post('project/claim/rewardmodal', 'ProjectController@claimRewardModal');
 	Route::post('project/claim/reward', 'ProjectController@claimReward');
+	Route::post('project/donatemodal', 'ProjectController@donateModal');
+	Route::post('project/donate', 'ProjectController@claimReward');
 	Route::get('project/add', 'ProjectController@add');
 	
 	//Project Update

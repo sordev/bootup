@@ -510,6 +510,24 @@ class ProjectController extends Controller {
 		return $return;
 	}
 
+	public function donateModal(Request $request){
+		$col = 6;
+		if($this->user){
+			$col = 12;
+		}
+		$projectid = $request->get('projectid');
+		$project = Reward::find($projectid);
+		$donateModal = view('modules.modal', ['id'=>'donatemodal'.$projectid,'title' => trans('project.donate'),'modalbody'=>'modules.project.donate'])
+			->withUser($this->user)
+			->withCol($col)
+			->withProject($project)
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $donateModal;
+		return $return;
+	}
+
 	public function claimReward(){
 		$addRewardModal = view('modules.modal', ['id'=>'addrewardmodal','title' => 'Төслийн урамшуулал нэмэх','modalbody'=>'modules.project.reward_add'])
 			->render()

@@ -7,7 +7,7 @@
 		@include('modules.form.formgroup',['type'=>'text','label'=>'Слаг','id'=>'slug',$required='required','old'=>$category->slug])
 		@include('modules.form.formgroup',['type'=>'select','label'=>'Төрөл','id'=>'type',$required='required','option'=>$category_type_options,'old'=>$category->type])
 		@include('modules.form.formgroup',['type'=>'text','label'=>'Тайлбар','id'=>'description',$required='','old'=>$category->description])
-		{!! Form::submit('Устгах',['class'=>'btn btn-default btn-danger']) !!}
+		{!! Form::submit(trans('messages.delete'),['class'=>'btn btn-default btn-danger']) !!}
 	@else
 		@include('modules.form.formgroup',['type'=>'text','label'=>'Дараалал','id'=>'position',$required=''])
 		@include('modules.form.formgroup',['type'=>'text','label'=>'Нэр','id'=>'title',$required='required'])

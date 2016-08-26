@@ -5,7 +5,9 @@
 		@if ($k+1 < $count)
 			<hr class="tiny">
 		@else
-			<a title="Бүх төслүүдийг харах" href="{{{url('projects')}}}" class="btn btn-default btn-lrg">Бүх төслүүдийг харах</a>
+			<div class="padding text-center">
+			<a title="Бүх төслүүдийг харах" href="{{{url('projects')}}}" class="btn btn-default btn-lg">Бүх төслүүдийг харах</a>
+			</div>
 		@endif
 		
 	@endforeach

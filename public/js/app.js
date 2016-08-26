@@ -347,7 +347,22 @@ jQuery(document).ready(function($j){
 						window.open(this.href, "ShareWindow", "width=400, height=300");
 						return false;
 					break;
-					case 'claimReward':
+					case 'donateModal':
+						projectid = btn.data('projectid');
+						ajaxCallback(formData+'&projectid='+projectid, '/project/donatemodal', function (d) {
+							if(d.status == false){
+								showError(d.errors,f);
+							} else {
+								if($('#donatemodal'+projectid).length == 0){
+									$('body').append(d.view);
+								}
+								validateRequired(f)
+								preventFormSubmission();
+								$('#donatemodal'+projectid).modal('show');
+							}
+						});
+					break;
+					case 'claimRewardModal':
 						rewardid = btn.data('rewardid');
 						ajaxCallback(formData+'&rewardid='+rewardid, '/project/claim/rewardmodal', function (d) {
 							if(d.status == false){

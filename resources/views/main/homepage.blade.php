@@ -97,7 +97,7 @@
 					<div class="right">
 						<h3 class="uppercase mb16">Оюуны бүтээл зардал багатай</h3>
 						<p>
-							Бүтээгдэхүүн үйлдвэрлэхэд цалин, серверийн зардлаа шийдчихсэн байхад асуудал байхгүй. Гадны бусад орнуудтай харьцуулахад Монголын цалингийн зардал 5-10 дахин бага.  
+							Бүтээгдэхүүн үйлдвэрлэхэд цалин, серверийн зардлаа шийдчихсэн байхад асуудал байхгүй. Гадны бусад орнуудтай харьцуулахад Монголын цалингийн зардал 5-10 дахин бага.
 						</p>
 					</div>
 				</div>
@@ -162,7 +162,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph1.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph1.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-ийн үйлдвэрлэл нэмэгдэнэ</h3>
@@ -173,7 +173,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph2.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph2.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-ийн залуус мөрөөдөлдөө илүү ойртоно</h3>
@@ -187,7 +187,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph3.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph3.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-ийг хүмүүс илүү ойлгодог болно</h3>
@@ -198,7 +198,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph4.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph4.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-оор экспорт хийгдэнэ</h3>
@@ -225,5 +225,5 @@
 			</div>
 		</div>
 	</section>
-	
+
 @endsection

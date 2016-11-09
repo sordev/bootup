@@ -1,6 +1,6 @@
 <?php
 return [
     'ordernumber' => 'Гүйлгээний дугаар',
-	'inactive' => 'Төлөөгүй',
-    'active' => 'Төлсөн',
+	'inactive'	  => 'Төлөөгүй',
+    'active' 	  => 'Төлсөн',
 ];

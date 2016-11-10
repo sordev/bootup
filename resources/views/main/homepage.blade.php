@@ -9,7 +9,7 @@
 		<div class="row">
 			<div class="col-md-4 col-md-4 col-sm-6">
 				<div class="home-step-box">
-					<a href="url('project/add')"><img src="{{{asset('images/main/add-project.jpg')}}}" alt="Төслөө нэм"/></a>
+					<a href="{{url('project/add')}}"><img src="{{{asset('images/main/add-project.jpg')}}}" alt="Төслөө нэм"/></a>
 				</div>
 				<h4>1. Төслөө нэм</h4>
 			</div>

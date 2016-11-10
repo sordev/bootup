@@ -30,7 +30,7 @@
 			</div>
 		<section>
 	@endif
-	@if($projects)
+	@if($projects->count()>0)
 		</div>
 			<section>
 				<div class="gray-box padding">
@@ -47,5 +47,8 @@
 				</div>
 			<section>
 		<div class="container">
+		@else
+			Уучлаарай хайлтанд тохирох үр дүн олдсонгүй
 	@endif
+
 @endsection

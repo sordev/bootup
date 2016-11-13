@@ -1,5 +1,7 @@
 ## Bootup
 
+[![Join the chat at https://gitter.im/bootupmn/Lobby](https://badges.gitter.im/bootupmn/Lobby.svg)](https://gitter.im/bootupmn/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Bootup is Laravel 5.2.x based crowdfunding opensource platform. Specifically made for Mongolian audience.
 
 ## Installation

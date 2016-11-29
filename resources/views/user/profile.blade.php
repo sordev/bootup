@@ -43,7 +43,7 @@
 					@endif
 				</ul>
 			</div>
-			
+
 		</div>
 	@endif
 @endsection

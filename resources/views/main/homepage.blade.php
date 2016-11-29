@@ -11,19 +11,19 @@
 				<div class="home-step-box">
 					<a href="url('project/add')"><img src="{{{asset('images/main/add-project.jpg')}}}" alt="Төслөө нэм"/></a>
 				</div>
-				<h4>1. Төслөө нэм</h4>
+				<h4>1.<b>{{trans('project.addproject')}}</h4>
 			</div>
 			<div class="col-md-4 col-md-4 col-sm-6">
 				<div class="home-step-box">
 					<img src="{{{asset('images/main/share-project.jpg')}}}" alt="Төслөө нэм"/>
 				</div>
-				<h4>2. Хүрээгээ идэвхижүүл</h4>
+				<h4>2.<b>{{trans('project.activeprojectrange')}}</h4>
 			</div>
 			<div class="col-md-4 col-md-4 col-sm-6">
 				<div class="home-step-box">
 					<img src="{{{asset('images/main/make-project.jpg')}}}" alt="Төслөө нэм"/>
 				</div>
-				<h4>3. Мөрөөдлөө биелүүл</h4>
+				<h4>3.<b>{{trans('project.fulfillyourdream')}} </h4>
 			</div>
 		</div>
 	</section>
@@ -31,9 +31,9 @@
 	<section class="blue-box projects">
 		<div class="container">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab">Онцлох төслүүд</a></li>
-				<li role="presentation"><a href="#new" aria-controls="new" role="tab" data-toggle="tab">Шинээр нэмэгдсэн</a></li>
-				<li role="presentation"><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab">Шинэчилэлт орсон</a></li>
+				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab"><br>{{trans('project.featuredprojects')}}</a></li>
+				<li role="presentation"><a href="#new" aria-controls="new" role="tab" data-toggle="tab"><br>{{trans('project.Newadded')}}</a></li>
+				<li role="presentation"><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab"><br>{{trans('project.Updated')}}</a></li>
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="featured">
@@ -91,7 +91,7 @@
 					<div class="right">
 						<h3 class="uppercase mb16">Оюуны бүтээл зардал багатай</h3>
 						<p>
-							Бүтээгдэхүүн үйлдвэрлэхэд цалин, серверийн зардлаа шийдчихсэн байхад асуудал байхгүй. Гадны бусад орнуудтай харьцуулахад Монголын цалингийн зардал 5-10 дахин бага.  
+							Бүтээгдэхүүн үйлдвэрлэхэд цалин, серверийн зардлаа шийдчихсэн байхад асуудал байхгүй. Гадны бусад орнуудтай харьцуулахад Монголын цалингийн зардал 5-10 дахин бага.
 						</p>
 					</div>
 				</div>
@@ -219,5 +219,5 @@
 			</div>
 		</div>
 	</section>
-	
+
 @endsection

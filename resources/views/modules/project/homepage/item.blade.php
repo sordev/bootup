@@ -5,9 +5,9 @@
 		<p>
 		{{{$p->intro}}}
 		</p>
-		
+
 		# @include('modules.categories.list',['categories'=>$p->categories])
-		
+
 		<div class="progress">
 		  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{{$p->percentage}}}"
 		  aria-valuemin="0" aria-valuemax="100" style="width:{{{$p->percentage}}}%">
@@ -16,23 +16,19 @@
 		<div class="row">
 			<div class="col-md-3">
 				<b>{{{$p->percentage}}}%</b>
-				<br>
-				бүрдсэн 
+				<br>{{trans('project.percentage')}}
 			</div>
 			<div class="col-md-3">
 				<b>{{{number_format($p->totalgoal)}}} ₮</b>
-				<br>
-				шаардлагатай 
+				<br>{{trans('project.required')}}
 			</div>
 			<div class="col-md-3">
 				<b>{{{number_format($p->totalpayment)}}} ₮</b>
-				<br>
-				цуглуулсан
+				<br>{{trans('project.collected')}}
 			</div>
 			<div class="col-md-3">
 				<b>{{{$p->daysleft}}}</b>
-				<br>
-				хоног үлдсэн
+				<br>{{trans('project.daysleft')}}
 			</div>
 		</div>
 	</div>

@@ -6,7 +6,7 @@
 	</div>
 		<div class="gray-box padding-lg">
 			<div class="container text-center">
-				<h1>Төслүүдийн ангилалалууд.</h1>
+				<h1><br>{{trans('project.projectscategories')}}</h1>
 				@if(isset($navigations['categories']))
 					@foreach($navigations['categories'] as $n)
 						<a class="btn btn-default btn-lg" href="{{{$n['url']}}}" title="{{{$n['title']}}}">{{{$n['title']}}}</a>
@@ -24,7 +24,7 @@
 		<section>
 			<div class="padding">
 			</div>
-				<h3 class="text-center">Онцлох төслүүд</h3>
+				<h3 class="text-center"><br>{{trans('project.featuredprojects')}}</h3>
 				@include('modules.slideshow.slideshow',['slideshow'=>$featured,'id'=>'project'])
 			<div class="padding">
 			</div>

@@ -8,7 +8,7 @@
 					<img src="{{{asset('images/logo-white.png')}}}" alt="Bootup">
 				</div>
 				<div class="col-md-3">
-					<h4>Бидний тухай</h4>
+					<h4><b>{{trans('project.aboutus')}}</h4>
 					@if(isset($navigations['about']))
 						<ul>
 							@foreach($navigations['about'] as $n)
@@ -22,7 +22,7 @@
 					@endif
 				</div>
 				<div class="col-md-3">
-					<h4>Тусламж</h4>
+					<h4><b>{{trans('project.help')}}</h4>
 					@if(isset($navigations['help']))
 						<ul>
 							@foreach($navigations['help'] as $n)
@@ -36,7 +36,7 @@
 					@endif
 				</div>
 				<div class="col-md-3">
-					<h4>Ангилал</h4>
+					<h4><b>{{trans('project.categories')}}</h4>
 					@if(isset($navigations['categories']))
 						<ul>
 							@foreach($navigations['categories'] as $n)

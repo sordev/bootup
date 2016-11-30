@@ -8,6 +8,11 @@ class Payment extends Model {
 
 	protected $table = 'payments';
 	public $timestamps = true;
+        protected $fillable = [
+	'project_id',
+	'user_id',
+	'value'
+	];
 
 	public function project()
 	{

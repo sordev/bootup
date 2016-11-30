@@ -9,7 +9,7 @@
 		<div class="row">
 			<div class="col-md-4 col-md-4 col-sm-6">
 				<div class="home-step-box">
-					<a href="url('project/add')"><img src="{{{asset('images/main/add-project.jpg')}}}" alt="Төслөө нэм"/></a>
+					<a href="{{url('project/add')}}"><img src="{{{asset('images/main/add-project.jpg')}}}" alt="Төслөө нэм"/></a>
 				</div>
 				<h4>1.<b>{{trans('project.addproject')}}</h4>
 			</div>
@@ -27,13 +27,23 @@
 			</div>
 		</div>
 	</section>
+	<div class="padding-sm">
+	</div>
 </div>
 	<section class="blue-box projects">
+		<div class="padding-sm">
+		</div>
 		<div class="container">
 			<ul class="nav nav-tabs" role="tablist">
+<<<<<<< HEAD
 				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab"><br>{{trans('project.featuredprojects')}}</a></li>
 				<li role="presentation"><a href="#new" aria-controls="new" role="tab" data-toggle="tab"><br>{{trans('project.Newadded')}}</a></li>
 				<li role="presentation"><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab"><br>{{trans('project.Updated')}}</a></li>
+=======
+				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab" class="btn-lg">Онцлох төслүүд</a></li>
+				<li role="presentation" ><a href="#new" aria-controls="new" role="tab" data-toggle="tab" class="btn-lg">Шинээр нэмэгдсэн</a></li>
+				<li role="presentation" ><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab" class="btn-lg">Шинэчилэлт орсон</a></li>
+>>>>>>> staging
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="featured">
@@ -46,6 +56,8 @@
 					@include('modules.project.homepage.list',['projects'=>$projects['updated']])
 				</div>
 			</div>
+		</div>
+		<div class="padding-sm">
 		</div>
 	</section>
 <div class="container">
@@ -156,7 +168,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph1.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph1.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-ийн үйлдвэрлэл нэмэгдэнэ</h3>
@@ -167,7 +179,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph2.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph2.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-ийн залуус мөрөөдөлдөө илүү ойртоно</h3>
@@ -181,7 +193,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph3.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph3.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-ийг хүмүүс илүү ойлгодог болно</h3>
@@ -192,7 +204,7 @@
 			<div class="col-md-6">
 				<article class="icon-round">
 					<div class="service-icon">
-						<img src="http://bootup.mn/wp-content/themes/bootup/img/graph4.jpg" alt="">
+						{{-- <img src="http://bootup.mn/wp-content/themes/bootup/img/graph4.jpg" alt=""> --}}
 					</div>
 					<div class="service-content">
 						<h3>МТ-оор экспорт хийгдэнэ</h3>

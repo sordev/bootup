@@ -35,15 +35,31 @@ class ProjectController extends Controller {
 	}
 
 	public function projectsSearch(Request $request){
+		$rules = [
+			'searchtext' => 'required|min:3',
+		];
+		$v = Validator::make($request->all(), $rules);
 		$this->layout = 'project.list';
-		$this->metas['title'] = 'Төслүүд | "'.$request->get('searchtext').'" Хайлтын үр дүн ';
-		// General list
-		$projects = Project::orderBy('id','DESC')
+		if ($v->fails()){
+			$this->metas['title'] = 'Хайх утгаа оруулна уу';
+			$this->view = $this->BuildLayout();
+			$this->view
+				->withProjects(null)
+				->withErrors($v->errors())
+				->withCategory(false)
+				;
+			return $this->view;
+		} else {
+			$this->metas['title'] = 'Төслүүд | "'.$request->get('searchtext').'" Хайлтын үр дүн ';
+			// General list
+			$projects = Project::orderBy('id','DESC')
 			->where('status',1)
 			->where('title','LIKE','%'.$request->get('searchtext').'%')
 			->paginate(6)
 			->appends($request->except('page'))
-		;
+			;
+
+		}
 		$this->view = $this->BuildLayout();
 		$this->view
 			->withProjects($projects)
@@ -146,13 +162,13 @@ class ProjectController extends Controller {
 					//TODO project ids comma separated
 					$project->category_ids = $request->get('category_ids');
 					$project->save();
-					
+
 					$projectCategoryIds = explode(',',$project->category_ids);
 					$projectCategories = [];
 					foreach($projectCategoryIds as $pg){
 						$projectCategories[] = Category::find($pg)->title;
 					}
-					
+
 					$project->category = implode(', ',$projectCategories);
 					$addprojectdetail = View::make('project.steps.addprojectdetail')
 						->withProject($project)
@@ -188,7 +204,7 @@ class ProjectController extends Controller {
 				}
 			break;
 		}
-		
+
 		return $return;
 	}
 
@@ -206,7 +222,7 @@ class ProjectController extends Controller {
 			if($this->user && ($this->user->id == $project->user_id || $this->user->role == 1)){
 				$edit = true;
 			}
-			
+
 			$video = $this->parseVideoUrl($project->video);
 		} else {
 			$this->metas['title'] = 'Төсөл олдсонгүй';
@@ -303,7 +319,7 @@ class ProjectController extends Controller {
 			$project->status = 1;
 			$project->save();
 			return redirect()->back()->withErrors(['error'=>trans('project.updated')]);
-		} 
+		}
 		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
 	}
 
@@ -313,7 +329,7 @@ class ProjectController extends Controller {
 			$project->status = 0;
 			$project->save();
 			return redirect()->back()->withErrors(['error'=>trans('project.updated')]);
-		} 
+		}
 		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
 	}
 
@@ -323,7 +339,7 @@ class ProjectController extends Controller {
 			$project->status = 2;
 			$project->save();
 			return redirect()->back()->withErrors(['error'=>trans('project.updated')]);
-		} 
+		}
 		return redirect()->back()->withErrors(['error'=>trans('project.cantupdate')]);
 	}
 
@@ -380,7 +396,7 @@ class ProjectController extends Controller {
 				$return['status'] = false;
 				$return['errors'] = ['Төслийн АйДи байхгүй байна'];
 			}
-			
+
 		}
 		return $return;
 	}
@@ -462,7 +478,7 @@ class ProjectController extends Controller {
 				$return['status'] = false;
 				$return['errors'] = ['Төслийн АйДи байхгүй байна'];
 			}
-			
+
 		}
 		return $return;
 	}
@@ -507,6 +523,24 @@ class ProjectController extends Controller {
 		;
 		$return['status'] = true;
 		$return['view'] = $claimRewardModal;
+		return $return;
+	}
+
+	public function donateModal(Request $request){
+		$col = 6;
+		if($this->user){
+			$col = 12;
+		}
+		$projectid = $request->get('projectid');
+		$project = Reward::find($projectid);
+		$donateModal = view('modules.modal', ['id'=>'donatemodal'.$projectid,'title' => trans('project.donate'),'modalbody'=>'modules.project.donate'])
+			->withUser($this->user)
+			->withCol($col)
+			->withProject($project)
+			->render()
+		;
+		$return['status'] = true;
+		$return['view'] = $donateModal;
 		return $return;
 	}
 

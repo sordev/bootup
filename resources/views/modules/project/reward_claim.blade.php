@@ -1,6 +1,6 @@
 @if(!$user)
 	@include('modules.user.login')
-	Та урамшууллыг авахаасаа өмнө нэвтрэн орно уу эсвэл <a href="{{{url('user/register')}}}" target="_blank">энд дараад</a> бүртгүүлж болно.
+	Та урамшууллыг авахаасаа өмнө нэвтрэн орно уу эсвэл <a href="{{{url('user/register')}}}" target="_blank">{{{trans('messages.clickhere')}}}</a> бүртгүүлж болно.
 	<hr>
 	<h4>Эсвэл бүртгүүлэлгүй урамшууллыг авч болно.</h4>
 	{!! Form::open(array('url'=>'user/store','method'=>'post','class'=>'')) !!}

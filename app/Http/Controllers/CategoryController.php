@@ -14,7 +14,7 @@ class CategoryController extends Controller {
   public function index($type = null)
   {
 	$this->layout = 'categories.index';
-	$this->metas['title'] = "Ангилалууд";
+	$this->metas['title'] = trans('project.categories');
 	$this->view = $this->BuildLayout();
 	if($type == null){
 		$categoryTypes = CategoryType::all();
@@ -25,7 +25,7 @@ class CategoryController extends Controller {
 		return $this->view->withCategories($categories);
 	}
   }
-  
+
   private function getCategoryTypeOptions(){
 	$return = [];
 	$categoryTypes = CategoryType::select('id','title')->get();
@@ -46,7 +46,7 @@ class CategoryController extends Controller {
 		if($id!=null){
 			$this->metas['title'] = "Ангилал засах";
 		}
-	   
+
 		$this->view = $this->BuildLayout();
 		$this->view->with('category_type_options',$this->getCategoryTypeOptions());
 		if($id!=null){
@@ -75,13 +75,13 @@ class CategoryController extends Controller {
 				'type' => 'required'
 			];
 		}
-		
+
 		$v = Validator::make($request->all(), $rules);
 		if ($v->fails()){
 			return redirect()->back()->withErrors($v->errors())->withInput();
 		}
 		if($request->has('id')){
-			
+
 			$category->fill($request->all());
 			$category->save();
 		} else {
@@ -92,9 +92,9 @@ class CategoryController extends Controller {
 
   public function destroy($id)
   {
-    
+
   }
-  
+
 }
 
 ?>

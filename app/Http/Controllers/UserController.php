@@ -26,7 +26,7 @@ use Socialite;
 use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller {
-	
+
 	public function appendScriptStyle(){
 		//for upload
 		array_push($this->scripts['footer'],'upload/jquery.ui.widget.js');
@@ -47,7 +47,7 @@ class UserController extends Controller {
    */
   public function index()
   {
-    
+
   }
 
   /**
@@ -81,8 +81,8 @@ class UserController extends Controller {
 			'passwordConfirmation' => 'required|same:password',
 			'tos' => 'required',
 		]);
-		
-		//recaptcha implementation 
+
+		//recaptcha implementation
 		$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
 		$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 		//dd($resp);
@@ -108,7 +108,7 @@ class UserController extends Controller {
 			Auth::login($user,true);
 			$return['status'] = true;
 			$return['url'] = url('/user/profile/'.$user->usr_id);
-			
+
 		}
 		return $return;
 	}
@@ -119,7 +119,7 @@ class UserController extends Controller {
 			$m->to($user->email, $user->fullname)->subject('Бүүтап сайтанд бүртгүүлсэнд баярлалаа!');
 		});
 	}
-	
+
 	public function loginPost(Request $request){
 		//validate input
 		$v = Validator::make($request->all(), [
@@ -127,7 +127,7 @@ class UserController extends Controller {
 			'password' => 'required'
 		]);
 
-		//recaptcha implementation 
+		//recaptcha implementation
 		//TODO after 5 attempt show recaptcha
 		//$recaptcha = new \ReCaptcha\ReCaptcha(Setting::getSetting('recaptchasecret'));
 		//$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
@@ -158,7 +158,7 @@ class UserController extends Controller {
 		}
 		return $return;
 	}
-  
+
 	public function login(Request $request,$provider=null){
 		$this->layout = 'user.login';
 		$this->metas['title'] = "Хэрэглэгч нэвтрэх хэсэг";
@@ -178,10 +178,10 @@ class UserController extends Controller {
 						$socialite->scopes(['user_friends','public_profile','email']);
 					}
 					return $socialite->redirect();
-					
+
 				}
 				break;
-			
+
 			default:
 				# code...
 				break;
@@ -219,13 +219,13 @@ class UserController extends Controller {
 				unset($photo_urlArray['query']);
 				$photo_url = $photo_urlArray['scheme'].'://'.$photo_urlArray['host'].$photo_urlArray['path'];
 			}
-			
+
 			if ($userSocial->exists()){
 				$userId = $userSocial->get()->first()->user_id;
 				$user = User::find($userId);
 			} else {
 				//if not existing then just register
-				
+
 				$user = User::create([
 					'email'=>$email,
 					'firstname'=>$firstname,
@@ -236,20 +236,20 @@ class UserController extends Controller {
 					'status'=>1,
 					'role'=>2,
 				]);
-				
+
 				if (!empty($photo_url)){
 					$thumbnail = Image::make($photo_url);
 					$thumbnail->resize(80, 80);
 					$thumbnail->save($avatarSavePath.'/thumbnail/'.$user->id.'.jpg');
-					
+
 					$medium = Image::make($photo_url);
 					$medium->resize(160, 160);
 					$medium->save($avatarSavePath.'/medium/'.$user->id.'.jpg');
-					
+
 					$large = Image::make($photo_url);
 					$large->resize(360, 360);
 					$large->save($avatarSavePath.'/large/'.$user->id.'.jpg');
-					
+
 					//$ext = pathinfo($photo_url,PATHINFO_EXTENSION);
 					$ext = 'jpg';
 					//file_put_contents($avatarSavePath.'/'.$user->id.'.'.$ext, fopen($photo_url, 'r'));
@@ -262,20 +262,20 @@ class UserController extends Controller {
 				$usersocial->social = $provider;
 				$usersocial->socialname = $socialUser->id;
 				$user->usersocial()->save($usersocial);
-				
+
 				$this->sendThankYouEmail($user);
 			}
 			Auth::login($user,true);
 		}
-		
+
 		//if already logged in
 		if (Auth::check() || Auth::viaRemember()){
 			return redirect('/user/profile');
 		}
-		
+
 		return $this->view;
 	}
-	
+
 	//logout
 	public function logout(){
 		Auth::logout(); // log the user out of our application
@@ -346,7 +346,7 @@ class UserController extends Controller {
 			$this->user->avatar = $request->get('avatar');
 			$this->user->bio = $request->get('bio');
 			$this->user->save();
-			
+
 			$return['errors'] = ['Таны мэдээлэл шинэчилэгдлээ'];
 		}
 		return redirect()->back()->withErrors($return['errors']);
@@ -384,7 +384,7 @@ class UserController extends Controller {
 				$errors = $v->errors();
 				return redirect()->back()->withErrors($errors)->withInput();
 			}
-			
+
 			if(Hash::check($request->get('password_old'), $user->password)){
 				$user->password = Hash::make($request->get('password_new'));
 				$user->save();
@@ -396,7 +396,7 @@ class UserController extends Controller {
 			$user->password = Hash::make($request->get('password_new'));
 			$user->save();
 		}
-		
+
 		return redirect()->back()->withStatus('Password Changed');
     }
 
@@ -427,7 +427,7 @@ class UserController extends Controller {
 			'fullname' => 'required',
 			'message' => 'required|min:20|max:1000',
 		]);
-		
+
 		if ($v->fails()){
 			$errors = $v->errors();
 			$return['status'] = false;
@@ -450,7 +450,7 @@ class UserController extends Controller {
 				$return['errors'] = ['Хэрэглэгч олдсонгүй'];
 			}
 		}
-		
+
 		return $return;
 	}
 

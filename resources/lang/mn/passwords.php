@@ -12,11 +12,10 @@ return [
     | has failed, such as for an invalid token or invalid new password.
     |
     */
-
-    'password' => 'Passwords must be at least six characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'Бид танд нууц үгээ солих холбоос бүхий имэйлийг илгээлээ!',
-    'token' => 'This password reset token is invalid.',
-    'user' => "We can't find a user with that e-mail address.",
-
+    'password' => 'Нууц үг хамгийн багадаа 6-н тэмдэгтийн урттай байх бөгөөд баталгаажуулттай ижил байх ёстой.',
+    'reset'    => 'Таний нууц үг шинэчлэгдсэн!',
+    'sent'     => 'Нууц үг сэргээх холбоосийг таний и-мэйл хаяг уруу явуулсан!',
+    'token'    => 'Нууц үг сэргээх холбоос алдаатай байна.',
+    'user'     => "Ийм и-мэйл хаягтай хэрэглэгч олдсонгүй.",
 ];
+

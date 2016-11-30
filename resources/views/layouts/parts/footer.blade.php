@@ -36,7 +36,7 @@
 					@endif
 				</div>
 				<div class="col-md-3">
-					<h4><b>{{trans('project.categories')}}</h4>
+					<h4><b>{{trans('project.category')}}</h4>
 					@if(isset($navigations['categories']))
 						<ul>
 							@foreach($navigations['categories'] as $n)

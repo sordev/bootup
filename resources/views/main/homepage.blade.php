@@ -35,15 +35,9 @@
 		</div>
 		<div class="container">
 			<ul class="nav nav-tabs" role="tablist">
-<<<<<<< HEAD
 				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab"><br>{{trans('project.featuredprojects')}}</a></li>
 				<li role="presentation"><a href="#new" aria-controls="new" role="tab" data-toggle="tab"><br>{{trans('project.Newadded')}}</a></li>
 				<li role="presentation"><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab"><br>{{trans('project.Updated')}}</a></li>
-=======
-				<li role="presentation" class="active"><a href="#featured" aria-controls="featured" role="tab" data-toggle="tab" class="btn-lg">Онцлох төслүүд</a></li>
-				<li role="presentation" ><a href="#new" aria-controls="new" role="tab" data-toggle="tab" class="btn-lg">Шинээр нэмэгдсэн</a></li>
-				<li role="presentation" ><a href="#updated" aria-controls="updated" role="tab" data-toggle="tab" class="btn-lg">Шинэчилэлт орсон</a></li>
->>>>>>> staging
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="featured">
